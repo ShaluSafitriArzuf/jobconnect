@@ -7,6 +7,7 @@ use App\Models\Job;
 use App\Models\Category;
 use App\Models\Company;
 
+
 class JobController extends Controller
 {
     public function index()
@@ -14,6 +15,7 @@ class JobController extends Controller
         $jobs = Job::with('company', 'category')->latest()->get();
         return view('jobs.index', compact('jobs'));
     }
+
 
     public function show($id)
     {
@@ -55,9 +57,9 @@ class JobController extends Controller
     {
         $job = Job::findOrFail($id);
         $categories = Category::all();
+
         return view('jobs.edit', compact('job', 'categories'));
     }
-
     public function update(Request $request, $id)
     {
         $job = Job::findOrFail($id);
