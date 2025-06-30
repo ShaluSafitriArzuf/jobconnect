@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\CategoryController;
+
 use App\Http\Middleware\RoleMiddleware;
 
 // ===================
@@ -47,6 +49,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
         Route::get('/jobs/{id}/edit', [JobController::class, 'edit'])->name('jobs.edit');
         Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
-        Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+        Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy')->middleware(RoleMiddleware::class . ':company');
     });
+});
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });

@@ -41,7 +41,8 @@
                                 <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-info btn-sm">🔍</a>
                                 @if(auth()->user()->role === 'company')
                                     <a href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning btn-sm">✏️</a>
-                                    <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline-block;"
+                                        onsubmit="return confirm('Yakin ingin menghapus?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">🗑️</button>

@@ -16,7 +16,6 @@ class JobController extends Controller
         return view('jobs.index', compact('jobs'));
     }
 
-
     public function show($id)
     {
         $job = Job::with('company', 'category')->findOrFail($id);
@@ -75,4 +74,5 @@ class JobController extends Controller
         $job->delete();
         return redirect()->route('jobs.index')->with('success', 'Job berhasil dihapus');
     }
+
 }
