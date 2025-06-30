@@ -1,23 +1,33 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Lowongan')
+
 @section('content')
-    <h2>Detail Lowongan Kerja</h2>
+    <h2 class="fw-bold mb-4">Detail Lowongan</h2>
 
-    @php
-        use Carbon\Carbon;
-    @endphp
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="card-title">{{ $job->title }}</h4>
+            <p class="text-muted mb-1">
+                <strong>Perusahaan:</strong> {{ $job->company->name ?? '-' }}
+            </p>
+            <p class="text-muted mb-1">
+                <strong>Kategori:</strong> {{ $job->category->name ?? '-' }}
+            </p>
+            <p class="text-muted mb-1">
+                <strong>Jenis Pekerjaan:</strong> {{ $job->job_type }}
+            </p>
+            <p class="text-muted mb-1">
+                <strong>Lokasi:</strong> {{ $job->location }}
+            </p>
+            <p class="text-muted mb-1">
+                <strong>Deadline:</strong> {{ \Carbon\Carbon::parse($job->deadline)->format('d M Y') }}
+            </p>
 
-    <div style="border: 1px solid #ccc; padding: 20px; width: 60%;">
-        <h3>{{ $job->title }}</h3>
-        <p><strong>Perusahaan:</strong> {{ $job->company->name ?? '-' }}</p>
-        <p><strong>Lokasi:</strong> {{ $job->location }}</p>
-        <p><strong>Kategori:</strong> {{ $job->category->name ?? '-' }}</p>
-        <p><strong>Jenis Pekerjaan:</strong> {{ $job->job_type }}</p>
-        <p><strong>Deadline:</strong> {{ Carbon::parse($job->deadline)->format('d M Y') }}</p>
-        <p><strong>Deskripsi:</strong></p>
-        <p>{{ $job->description }}</p>
+            <hr>
+            <p>{!! nl2br(e($job->description)) !!}</p>
+
+            <a href="{{ route('jobs.index') }}" class="btn btn-secondary mt-3">⬅ Kembali</a>
+        </div>
     </div>
-
-    <br>
-    <a href="{{ route('jobs.index') }}">⬅️ Kembali ke Daftar</a>
 @endsection

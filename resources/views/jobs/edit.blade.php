@@ -1,10 +1,13 @@
 @extends('layouts.app')
 
+@section('title', 'Edit Lowongan')
+
 @section('content')
-    <h2>Edit Lowongan Kerja</h2>
+    <h2 class="fw-bold mb-4">Edit Lowongan Kerja</h2>
 
     @if ($errors->any())
-        <div style="color: red">
+        <div class="alert alert-danger">
+            <strong>Ups!</strong> Ada kesalahan input:<br><br>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -17,34 +20,49 @@
         @csrf
         @method('PUT')
 
-        <label>Judul:</label><br>
-        <input type="text" name="title" value="{{ old('title', $job->title) }}"><br><br>
+        <div class="mb-3">
+            <label class="form-label">Judul Pekerjaan</label>
+            <input type="text" name="title" class="form-control" value="{{ old('title', $job->title) }}" required>
+        </div>
 
-        <label>Deskripsi:</label><br>
-        <textarea name="description">{{ old('description', $job->description) }}</textarea><br><br>
+        <div class="mb-3">
+            <label class="form-label">Deskripsi</label>
+            <textarea name="description" class="form-control" rows="5" required>{{ old('description', $job->description) }}</textarea>
+        </div>
 
-        <label>Lokasi:</label><br>
-        <input type="text" name="location" value="{{ old('location', $job->location) }}"><br><br>
+        <div class="mb-3">
+            <label class="form-label">Lokasi</label>
+            <input type="text" name="location" class="form-control" value="{{ old('location', $job->location) }}" required>
+        </div>
 
-        <label>Jenis Pekerjaan:</label><br>
-        <select name="job_type">
-            <option value="Full-Time" {{ $job->job_type == 'Full-Time' ? 'selected' : '' }}>Full-Time</option>
-            <option value="Part-Time" {{ $job->job_type == 'Part-Time' ? 'selected' : '' }}>Part-Time</option>
-            <option value="Internship" {{ $job->job_type == 'Internship' ? 'selected' : '' }}>Internship</option>
-        </select><br><br>
+        <div class="mb-3">
+            <label class="form-label">Jenis Pekerjaan</label>
+            <select name="job_type" class="form-select" required>
+                <option value="">-- Pilih --</option>
+                <option value="Full-Time" {{ $job->job_type === 'Full-Time' ? 'selected' : '' }}>Full-Time</option>
+                <option value="Part-Time" {{ $job->job_type === 'Part-Time' ? 'selected' : '' }}>Part-Time</option>
+                <option value="Internship" {{ $job->job_type === 'Internship' ? 'selected' : '' }}>Internship</option>
+            </select>
+        </div>
 
-        <label>Deadline:</label><br>
-        <input type="date" name="deadline" value="{{ old('deadline', $job->deadline->format('Y-m-d')) }}"><br><br>
+        <div class="mb-3">
+            <label class="form-label">Kategori</label>
+            <select name="category_id" class="form-select" required>
+                <option value="">-- Pilih Kategori --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ $job->category_id == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-        <label>Kategori:</label><br>
-        <select name="category_id">
-            @foreach ($categories as $category)
-                <option value="{{ $category->id }}" {{ $job->category_id == $category->id ? 'selected' : '' }}>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </select><br><br>
+        <div class="mb-3">
+            <label class="form-label">Deadline</label>
+            <input type="date" name="deadline" class="form-control" value="{{ old('deadline', $job->deadline->format('Y-m-d')) }}" required>
+        </div>
 
-        <button type="submit">Update</button>
+        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+        <a href="{{ route('jobs.index') }}" class="btn btn-secondary">Batal</a>
     </form>
 @endsection
