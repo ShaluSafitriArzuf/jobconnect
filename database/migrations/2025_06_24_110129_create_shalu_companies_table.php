@@ -9,18 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::create('shalu_companies', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('industry');
-        $table->string('email')->unique();
-        $table->string('address');
-        $table->string('logo')->nullable(); // kalau mau upload logo perusahaan
-        $table->timestamps();
-    });
-}
+    public function up()
+    {
+        Schema::create('shalu_companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('industry')->nullable(); // opsional
+            $table->string('email')->unique();
+            $table->string('location'); // ✅ lokasi perusahaan
+            $table->text('description')->nullable(); // ✅ penjelasan tentang perusahaan
+            $table->string('logo')->nullable(); // logo opsional
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

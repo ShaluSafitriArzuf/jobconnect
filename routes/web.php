@@ -4,19 +4,23 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\RoleMiddleware;
 
 // ===================
-// AUTH
+// AUTH ROUTES
 // ===================
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/login', [AuthController::class, 'formLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'formRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
 // ===================
 // PUBLIC JOB ROUTES
@@ -27,37 +31,51 @@ Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 // ===================
 // DASHBOARD PER ROLE
 // ===================
-Route::get('/admin/dashboard', function () {
-    return 'Selamat datang Admin!';
-})->middleware(['auth', RoleMiddleware::class . ':admin']);
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->get('/admin/dashboard', function () {
+    return view('dashboard.admin');
+})->name('dashboard.admin');
 
-Route::get('/company/dashboard', function () {
-    return 'Selamat datang Perusahaan!';
-})->middleware(['auth', RoleMiddleware::class . ':company']);
+Route::middleware(['auth', RoleMiddleware::class . ':company'])->get('/company/dashboard', function () {
+    return view('dashboard.company');
+})->name('dashboard.company');
 
-Route::get('/user/dashboard', function () {
-    return 'Selamat datang User!';
-})->middleware(['auth', RoleMiddleware::class . ':user']);
+Route::middleware(['auth', RoleMiddleware::class . ':user'])->get('/user/dashboard', function () {
+    return view('dashboard.user');
+})->name('dashboard.user');
 
 // ===================
-// JOB CRUD (Hanya untuk 'company')
+// JOB CRUD + PELAMAR (Hanya untuk company)
 // ===================
 Route::middleware(['auth', RoleMiddleware::class . ':company'])->group(function () {
-    Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
-    Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
-    Route::get('/jobs/{id}/edit', [JobController::class, 'edit'])->name('jobs.edit');
-    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('jobs.update');
-    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('jobs.destroy');
+    Route::resource('jobs', JobController::class)->except(['index', 'show']);
+    
+    Route::get('/jobs/{id}/applicants', [ApplicationController::class, 'applicants'])->name('applications.applicants');
+    Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus'])->name('applications.updateStatus');
 });
 
 // ===================
-// CATEGORY CRUD (Hanya untuk 'admin')
+// CATEGORY CRUD (Hanya untuk admin)
 // ===================
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
-    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // Kelola user
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+});
+
+// ===================
+// COMPANY CRUD (Hanya untuk company)
+// ===================
+Route::middleware(['auth', RoleMiddleware::class . ':company'])->group(function () {
+    Route::resource('companies', CompanyController::class)->except(['show']);
+});
+
+// ===================
+// APPLICATION ROUTES (Hanya untuk user)
+// ===================
+Route::middleware(['auth', RoleMiddleware::class . ':user'])->group(function () {
+    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
+    Route::get('/applications/create/{jobId}', [ApplicationController::class, 'create'])->name('applications.create');
+    Route::post('/applications/store/{jobId}', [ApplicationController::class, 'store'])->name('applications.store');
 });

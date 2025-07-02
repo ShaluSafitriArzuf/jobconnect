@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
+    use HasFactory;
+
     protected $table = 'shalu_companies';
 
     protected $fillable = [
-        'name', 'location', 'description', // sesuaikan sama field di database-mu
+        'name', 'location', 'description',
     ];
 }

@@ -18,7 +18,7 @@ return new class extends Migration
         $table->string('title');
         $table->text('description');
         $table->string('location');
-        $table->enum('job_type', ['Full-Time', 'Part-Time', 'Internship']);
+       $table->enum('job_type', ['Full-Time', 'Part-Time', 'Internship', 'Remote']);
         $table->date('deadline');
         $table->timestamps();
 

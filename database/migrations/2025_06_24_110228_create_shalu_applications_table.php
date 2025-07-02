@@ -17,7 +17,7 @@ return new class extends Migration
         $table->unsignedBigInteger('job_id');
         $table->string('cv')->nullable(); // upload CV
         $table->text('cover_letter')->nullable();
-        $table->enum('status', ['Pending', 'Accepted', 'Rejected'])->default('Pending');
+        $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
         $table->timestamps();
 
         $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

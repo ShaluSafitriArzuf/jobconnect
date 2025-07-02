@@ -5,7 +5,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold">Daftar Lowongan Kerja</h2>
-        @if (auth()->user() && auth()->user()->role === 'company')
+        @if (auth()->check() && auth()->user()->role === 'company')
             <a href="{{ route('jobs.create') }}" class="btn btn-primary">➕ Tambah Lowongan</a>
         @endif
     </div>
@@ -39,14 +39,21 @@
                             <td>{{ \Carbon\Carbon::parse($job->deadline)->format('d M Y') }}</td>
                             <td>
                                 <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-info btn-sm">🔍</a>
-                                @if(auth()->user()->role === 'company')
+
+                                @if(auth()->check() && auth()->user()->role === 'company')
                                     <a href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning btn-sm">✏️</a>
+
                                     <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" style="display:inline-block;"
                                         onsubmit="return confirm('Yakin ingin menghapus?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
                                     </form>
+
+                                    {{-- Tombol Lihat Pelamar --}}
+                                    <a href="{{ route('applications.applicants', $job->id) }}" class="btn btn-success btn-sm mt-1">
+                                        👥 Pelamar
+                                    </a>
                                 @endif
                             </td>
                         </tr>

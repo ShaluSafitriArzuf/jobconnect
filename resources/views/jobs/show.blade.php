@@ -27,7 +27,30 @@
             <hr>
             <p>{!! nl2br(e($job->description)) !!}</p>
 
-            <a href="{{ route('jobs.index') }}" class="btn btn-secondary mt-3">⬅ Kembali</a>
+            {{-- Tombol Aksi --}}
+            <div class="d-flex justify-content-between mt-4 align-items-center">
+                <a href="{{ route('jobs.index') }}" class="btn btn-secondary">⬅ Kembali</a>
+
+                {{-- Tombol "Lihat Pelamar" untuk Perusahaan --}}
+                @if(auth()->check() && auth()->user()->role === 'company')
+                    <a href="{{ route('applications.applicants', $job->id) }}" class="btn btn-primary">
+                        📄 Lihat Pelamar
+                    </a>
+                @endif
+
+                {{-- Tombol "Lamar Sekarang" untuk User --}}
+                @auth
+                    @if(auth()->user()->role === 'user')
+                        <a href="{{ route('applications.create', $job->id) }}" class="btn btn-success">
+                            ✅ Lamar Sekarang
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                        🔒 Login untuk melamar
+                    </a>
+                @endauth
+            </div>
         </div>
     </div>
 @endsection
