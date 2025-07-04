@@ -13,23 +13,23 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
-    public function create()
-    {
-        return view('categories.create');
-    }
+   public function create()
+{
+    return view('admin.categories.create'); // Pastikan view ini ada
+}
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:shalu_categories,name',
-        ]);
-
-        Category::create([
-            'name' => $request->name,
-        ]);
-
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan');
-    }
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|unique:categories',
+        'description' => 'nullable|string'
+    ]);
+    
+    Category::create($validated);
+    
+    return redirect()->route('admin.categories.index')
+         ->with('success', 'Kategori berhasil ditambahkan!');
+}
 
     public function edit($id)
     {

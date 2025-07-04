@@ -12,24 +12,19 @@ class Application extends Model
     protected $table = 'shalu_applications';
 
     protected $fillable = [
-        'user_id', 'job_id', 'cover_letter', 'status',
+        'shalu_user_id', // Sesuaikan dengan migrasi
+        'shalu_job_id',  // Sesuaikan dengan migrasi
+        'cover_letter',
+        'status'         // Tambahkan jika diperlukan
     ];
 
-    /**
-     * Relasi ke model User
-     * Satu application dimiliki oleh satu user
-     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'shalu_user_id');
     }
 
-    /**
-     * Relasi ke model Job
-     * Satu application terkait dengan satu job
-     */
     public function job()
     {
-        return $this->belongsTo(Job::class);
+        return $this->belongsTo(Job::class, 'shalu_job_id');
     }
 }

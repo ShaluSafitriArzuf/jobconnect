@@ -10,18 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-    {
-        Schema::create('shalu_companies', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('industry')->nullable(); // opsional
-            $table->string('email')->unique();
-            $table->string('location'); // ✅ lokasi perusahaan
-            $table->text('description')->nullable(); // ✅ penjelasan tentang perusahaan
-            $table->string('logo')->nullable(); // logo opsional
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('shalu_companies', function (Blueprint $table) {
+        $table->id();
+       $table->foreignId('shalu_user_id')->nullable()->constrained('shalu_users');
+        $table->string('name');
+        $table->string('industry')->nullable();
+        $table->string('email')->unique();
+        $table->string('location');
+        $table->text('description')->nullable();
+        $table->string('logo')->nullable();
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

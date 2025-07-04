@@ -14,26 +14,40 @@ class Job extends Model
 
     protected $fillable = [
         'title',
-        'company_id',
-        'category_id',
+        'shalu_company_id',  // Ubah dari company_id
+        'shalu_category_id', // Ubah dari category_id
         'location',
         'description',
         'job_type',
         'deadline',
     ];
 
+    // app/Models/Job.php
     public function company()
-    {
-        return $this->belongsTo(\App\Models\Company::class);
-    }
+{
+    return $this->belongsTo(Company::class, 'shalu_company_id');
+}
 
     public function category()
     {
-        return $this->belongsTo(\App\Models\Category::class);
+        return $this->belongsTo(Category::class)->withDefault([
+            'name' => 'Umum'
+        ]);
     }
 
-    public function applications()
+    // Scope untuk job aktif
+    public function scopeActive($query)
     {
-        return $this->hasMany(\App\Models\Application::class);
+        return $query->where('status', 'active');
     }
+
+   public function applications()
+{
+    return $this->hasMany(Application::class, 'shalu_job_id');
+}
+    protected $casts = [
+        'deadline' => 'date', // atau 'datetime'
+        // ... casts lainnya
+    ];
+
 }

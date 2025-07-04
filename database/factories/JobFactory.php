@@ -16,17 +16,16 @@ class JobFactory extends Factory
      *
      * @return array<string, mixed>
      */
-   public function definition(): array
-    {
-        return [
-            'title' => $this->faker->jobTitle,
-            'company_id' => Company::factory(),
-            'category_id' => Category::factory(),
-            'location' => $this->faker->city,
-            'description' => $this->faker->paragraph,
-            'job_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Remote']),
-            'deadline' => now()->addDays(rand(10, 30)),
-        ];
-    }
-
+   public function definition()
+{
+    return [
+        'title' => $this->faker->jobTitle,
+        'shalu_company_id' => Company::factory(), // Ubah dari company_id
+        'shalu_category_id' => Category::factory(),
+        'location' => $this->faker->city,
+        'description' => $this->faker->paragraph,
+        'job_type' => $this->faker->randomElement(['Full-Time', 'Part-Time']),
+        'deadline' => $this->faker->dateTimeBetween('now', '+1 year'),
+    ];
+}
 }

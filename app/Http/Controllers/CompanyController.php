@@ -9,30 +9,40 @@ class CompanyController extends Controller
 {
     public function index()
     {
-        $companies = Company::latest()->get();
+        $companies = Company::withCount('jobs')
+            ->orderBy('name')
+            ->paginate(10);
+
+        // Atau jika perlu kondisi khusus:
+        $companies = Company::withCount([
+            'jobs as jobs_count' => function ($query) {
+                $query->where('job_type', 'Full-Time'); // Contoh filter
+            }
+        ])->paginate(10);
+
         return view('companies.index', compact('companies'));
     }
 
     public function create()
     {
-        return view('companies.create');
+        return view('admin.companies.create'); // Sesuaikan dengan lokasi view Anda
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:shalu_companies,name',
-            'location' => 'required',
+        // Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:companies',
+            // tambahkan field lainnya
         ]);
 
-        Company::create([
-            'name' => $request->name,
-            'location' => $request->location,
-        ]);
+        // Simpan data
+        Company::create($validated);
 
-        return redirect()->route('companies.index')->with('success', 'Perusahaan berhasil ditambahkan');
+        return redirect()->route('admin.companies.index')
+            ->with('success', 'Perusahaan berhasil dibuat!');
     }
-
     public function edit($id)
     {
         $company = Company::findOrFail($id);
@@ -61,4 +71,5 @@ class CompanyController extends Controller
         $company->delete();
         return redirect()->route('companies.index')->with('success', 'Perusahaan berhasil dihapus');
     }
+
 }
