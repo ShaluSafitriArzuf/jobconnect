@@ -11,7 +11,7 @@
                     <i class="bi bi-pencil-square me-2"></i>Edit Lowongan
                     <span class="text-muted fs-5">({{ $job->title }})</span>
                 </h2>
-                <a href="{{ route('company.jobs.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -31,11 +31,10 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route('company.jobs.update', $job->id) }}" method="POST">
+                    <form action="{{ route('jobs.update', $job->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
-                        <!-- Judul -->
                         <div class="mb-4">
                             <label for="title" class="form-label fw-bold">
                                 <i class="bi bi-card-heading me-1"></i>Judul Lowongan
@@ -50,7 +49,6 @@
                             @enderror
                         </div>
 
-                        <!-- Deskripsi -->
                         <div class="mb-4">
                             <label for="description" class="form-label fw-bold">
                                 <i class="bi bi-file-text me-1"></i>Deskripsi Pekerjaan
@@ -65,7 +63,6 @@
                         </div>
 
                         <div class="row g-3">
-                            <!-- Lokasi -->
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="location" class="form-label fw-bold">
@@ -81,8 +78,7 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <!-- Jenis -->
+                            
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="job_type" class="form-label fw-bold">
@@ -107,7 +103,6 @@
                         </div>
 
                         <div class="row g-3">
-                            <!-- Kategori -->
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="shalu_category_id" class="form-label fw-bold">
@@ -129,8 +124,7 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <!-- Deadline -->
+                            
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="deadline" class="form-label fw-bold">
@@ -149,34 +143,6 @@
                             </div>
                         </div>
 
-                        <!-- Gaji -->
-                        <div class="mb-4">
-                            <label for="salary" class="form-label fw-bold">
-                                <i class="bi bi-cash-coin me-1"></i>Gaji
-                            </label>
-                            <input type="text" name="salary" id="salary" 
-                                class="form-control @error('salary') is-invalid @enderror" 
-                                value="{{ old('salary', $job->salary) }}">
-                            @error('salary')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Persyaratan -->
-                        <div class="mb-4">
-                            <label for="requirements" class="form-label fw-bold">
-                                <i class="bi bi-list-check me-1"></i>Persyaratan
-                                <span class="text-danger">*</span>
-                            </label>
-                            <textarea name="requirements" id="requirements" rows="5"
-                                class="form-control @error('requirements') is-invalid @enderror"
-                                required>{{ old('requirements', $job->requirements) }}</textarea>
-                            @error('requirements')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Tombol -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-success px-4">
                                 <i class="bi bi-check-circle-fill me-1"></i> Simpan Perubahan
@@ -185,7 +151,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

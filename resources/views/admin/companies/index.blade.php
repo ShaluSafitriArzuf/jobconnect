@@ -8,11 +8,6 @@
         <h2 class="fw-bold mb-0">
             <i class="bi bi-buildings-fill me-2"></i>Daftar Perusahaan
         </h2>
-        <div>
-            <a href="{{ route('companies.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Perusahaan
-            </a>
-        </div>
     </div>
 
     @if (session('success'))
@@ -27,10 +22,7 @@
             <div class="card-body text-center py-5">
                 <i class="bi bi-building display-5 text-muted mb-3"></i>
                 <h5 class="text-muted">Belum ada perusahaan terdaftar</h5>
-                <p class="text-muted">Mulai dengan menambahkan perusahaan pertama Anda</p>
-                <a href="{{ route('companies.create') }}" class="btn btn-primary mt-3">
-                    <i class="bi bi-plus-lg me-1"></i> Tambah Perusahaan
-                </a>
+                <p class="text-muted">Perusahaan akan muncul jika user role company telah mengisi profil mereka.</p>
             </div>
         </div>
     @else
@@ -68,11 +60,14 @@
                                     <td>{{ $company->jobs_count ?? 0 }}</td>
                                     <td class="pe-4">
                                         <div class="d-flex justify-content-end gap-2">
-                                            <a href="{{ route('companies.edit', $company->id) }}" 
-                                               class="btn btn-sm btn-outline-warning" title="Edit">
-                                                <i class="bi bi-pencil-fill"></i>
+                                            {{-- Optional: Tombol Lihat --}}
+                                            <a href="{{ route('admin.companies.show', $company->id) }}" 
+                                               class="btn btn-sm btn-outline-info" title="Lihat Detail">
+                                                <i class="bi bi-eye-fill"></i>
                                             </a>
-                                            <form action="{{ route('companies.destroy', $company->id) }}" method="POST" 
+                                            
+                                            {{-- Tombol Hapus --}}
+                                            <form action="{{ route('admin.companies.destroy', $company->id) }}" method="POST" 
                                                   class="d-inline" 
                                                   onsubmit="return confirm('Apakah Anda yakin ingin menghapus perusahaan ini?')">
                                                 @csrf

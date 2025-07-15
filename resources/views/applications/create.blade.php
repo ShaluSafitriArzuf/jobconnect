@@ -30,23 +30,94 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route('applications.store', $job->id) }}" method="POST">
+                    <form action="{{ route('applications.store', $job->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label for="cover_letter" class="form-label fw-bold">
-                                <i class="bi bi-file-earmark-text me-1"></i>Surat Lamaran
-                                <span class="text-danger">*</span>
+                                <i class="bi bi-chat-left-text me-1"></i>Pesan Pengantar / Motivasi Melamar <span class="text-danger">*</span>
                             </label>
-                            <textarea name="cover_letter" id="cover_letter" rows="8" 
-                                class="form-control @error('cover_letter') is-invalid @enderror" 
-                                placeholder="Tuliskan surat lamaran Anda...">{{ old('cover_letter') }}</textarea>
+                            <small class="text-muted d-block mb-2">Ceritakan mengapa kamu tertarik melamar pekerjaan ini, pengalaman yang relevan, atau motivasimu.</small>
+                            <textarea name="cover_letter" id="cover_letter" rows="6"
+                                class="form-control @error('cover_letter') is-invalid @enderror"
+                                placeholder="Contoh: Saya sangat tertarik dengan posisi ini karena saya memiliki pengalaman dalam bidang yang sama selama 2 tahun..." required>{{ old('cover_letter') }}</textarea>
                             @error('cover_letter')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="form-text">
-                                Jelaskan mengapa Anda cocok untuk posisi ini (minimal 100 karakter).
-                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cv" class="form-label fw-bold">
+                                <i class="bi bi-paperclip me-1"></i>Upload CV <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" name="cv" id="cv" class="form-control @error('cv') is-invalid @enderror" required>
+                            @error('cv')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="portfolio_link" class="form-label fw-bold">
+                                <i class="bi bi-link-45deg me-1"></i>Link Portofolio (opsional)
+                            </label>
+                            <input type="url" name="portfolio_link" id="portfolio_link"
+                                value="{{ old('portfolio_link') }}"
+                                class="form-control" placeholder="https://behance.net/namamu">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="linkedin_link" class="form-label fw-bold">
+                                <i class="bi bi-linkedin me-1"></i>LinkedIn (opsional)
+                            </label>
+                            <input type="url" name="linkedin_link" id="linkedin_link"
+                                value="{{ old('linkedin_link') }}"
+                                class="form-control" placeholder="https://linkedin.com/in/namamu">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="education" class="form-label fw-bold">
+                                <i class="bi bi-mortarboard-fill me-1"></i>Riwayat Pendidikan
+                            </label>
+                            <input type="text" name="education" id="education"
+                                value="{{ old('education') }}"
+                                class="form-control" placeholder="Contoh: S1 Teknik Informatika - Universitas ABC" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="experience" class="form-label fw-bold">
+                                <i class="bi bi-briefcase-fill me-1"></i>Pengalaman Kerja
+                            </label>
+                            <textarea name="experience" id="experience" rows="4" class="form-control" placeholder="Contoh: 2 tahun sebagai Front-End Developer di PT XYZ" required>{{ old('experience') }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="domicile" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt-fill me-1"></i>Domisili
+                            </label>
+                            <input type="text" name="domicile" id="domicile"
+                                value="{{ old('domicile') }}"
+                                class="form-control" placeholder="Contoh: Jakarta Selatan" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="availability" class="form-label fw-bold">
+                                <i class="bi bi-calendar-check-fill me-1"></i>Ketersediaan Mulai Bekerja
+                            </label>
+                            <select name="availability" id="availability" class="form-select" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="segera" {{ old('availability') == 'segera' ? 'selected' : '' }}>Segera</option>
+                                <option value="1_minggu" {{ old('availability') == '1_minggu' ? 'selected' : '' }}>Dalam 1 Minggu</option>
+                                <option value="1_bulan" {{ old('availability') == '1_bulan' ? 'selected' : '' }}>Dalam 1 Bulan</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label fw-bold">
+                                <i class="bi bi-telephone-fill me-1"></i>Nomor Telepon
+                            </label>
+                            <input type="text" name="phone" id="phone"
+                                value="{{ old('phone') }}"
+                                class="form-control" placeholder="0812xxxxxxx" required>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -57,23 +128,8 @@
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const textarea = document.getElementById('cover_letter');
-        const charCount = document.getElementById('charCount');
-        
-        textarea.addEventListener('input', function() {
-            const remaining = 100 - this.value.length;
-            charCount.textContent = remaining > 0 ? 
-                `Minimal ${remaining} karakter lagi` : 'Jumlah karakter cukup';
-            charCount.className = remaining > 0 ? 'text-danger' : 'text-success';
-        });
-    });
-</script>
-@endpush

@@ -5,59 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="JobConnect - Platform pencarian kerja dan rekrutmen terbaik">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>@yield('title', 'JobConnect')</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    
+
     @stack('styles')
 </head>
 <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('jobs.index') }}">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('admin.jobs.index') }}">
                 <i class="bi bi-briefcase me-2"></i>
                 <span>JobConnect</span>
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarContent">
                 <!-- Left Side Nav -->
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('jobs.index') }}">
-                            <i class="bi bi-search me-1"></i> Cari Lowongan
-                        </a>
-                    </li>
                     @auth
+                        @if(auth()->user()->role === 'user')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.jobs.index') }}">
+                                    <i class="bi bi-search me-1"></i> Cari Lowongan
+                                </a>
+                            </li>
+                        @endif
+
                         @if(auth()->user()->role === 'company')
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('jobs.create') }}">
+                                <a class="nav-link" href="{{ route('company.jobs.create') }}">
                                     <i class="bi bi-plus-circle me-1"></i> Buat Lowongan
                                 </a>
                             </li>
                         @endif
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.jobs.index') }}">
+                                <i class="bi bi-search me-1"></i> Cari Lowongan
+                            </a>
+                        </li>
                     @endauth
                 </ul>
-                
+
                 <!-- Right Side Nav -->
                 <ul class="navbar-nav ms-auto">
                     @auth
-                        <!-- Notification Dropdown -->
                         @if(isset($unreadNotificationsCount))
                         <li class="nav-item dropdown">
                             <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
@@ -74,7 +82,7 @@
                                 </li>
                                 @forelse($notifications as $notification)
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center py-2 {{ $notification->unread() ? 'bg-light' : '' }}" 
+                                        <a class="dropdown-item d-flex align-items-center py-2 {{ $notification->unread() ? 'bg-light' : '' }}"
                                            href="{{ $notification->data['url'] ?? '#' }}">
                                             <div class="flex-shrink-0 me-3">
                                                 <i class="bi bi-{{ $notification->data['icon'] ?? 'bell' }} text-{{ $notification->data['color'] ?? 'primary' }}"></i>
@@ -104,7 +112,7 @@
                             </ul>
                         </li>
                         @endif
-                        
+
                         <!-- User Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
@@ -120,10 +128,7 @@
                                     <h6 class="dropdown-header">Akun Saya</h6>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ 
-                                        auth()->user()->role === 'admin' ? '#' : 
-                                        (auth()->user()->role === 'company' ? '#' : '#') 
-                                    }}">
+                                    <a class="dropdown-item" href="#">
                                         <i class="bi bi-person me-2"></i> Profil
                                     </a>
                                 </li>
@@ -135,17 +140,13 @@
                                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                                     </a>
                                 </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="#">
                                         <i class="bi bi-gear me-2"></i> Pengaturan
                                     </a>
                                 </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
@@ -195,7 +196,7 @@
                 <div class="col-md-2 mb-4 mb-md-0">
                     <h6 class="fw-bold">Untuk Pencari Kerja</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{{ route('jobs.index') }}" class="text-white-50">Cari Lowongan</a></li>
+                        <li class="mb-2"><a href="{{ route('admin.jobs.index') }}" class="text-white-50">Cari Lowongan</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Tips Karir</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Buat Resume</a></li>
                     </ul>
@@ -204,7 +205,7 @@
                     <h6 class="fw-bold">Untuk Perusahaan</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><a href="{{ route('register') }}?role=company" class="text-white-50">Daftar Perusahaan</a></li>
-                        <li class="mb-2"><a href="{{ route('jobs.create') }}" class="text-white-50">Pasang Lowongan</a></li>
+                        <li class="mb-2"><a href="{{ route('company.jobs.create') }}" class="text-white-50">Pasang Lowongan</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Solusi Rekrutmen</a></li>
                     </ul>
                 </div>
@@ -239,10 +240,10 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JS -->
     <script src="{{ asset('js/app.js') }}"></script>
-    
+
     @stack('scripts')
 </body>
 </html>

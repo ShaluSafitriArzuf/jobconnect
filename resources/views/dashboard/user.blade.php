@@ -3,171 +3,182 @@
 @section('title', 'Dashboard Pengguna')
 
 @section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="fw-bold mb-0">
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold text-primary">
             <i class="bi bi-person-circle me-2"></i>Dashboard Pengguna
         </h1>
         <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userActions" 
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userActions"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-gear-fill"></i> Menu
             </button>
             <ul class="dropdown-menu" aria-labelledby="userActions">
-                <li><a class="dropdown-item" href="{{ route('user.profile') }}"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{{ route('user.settings') }}"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                <li><a class="dropdown-item" href="{{ route('user.dashboard') }}">
+                    <i class="bi bi-person me-2"></i>Profil Saya
+                </a></li>
             </ul>
         </div>
     </div>
 
     <!-- Welcome Card -->
-    <div class="card border-0 shadow-sm bg-info bg-opacity-10 mb-4">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <i class="bi bi-person-badge display-6 text-info"></i>
-                </div>
-                <div class="flex-grow-1 ms-4">
-                    <h3 class="card-title">Selamat datang, {{ auth()->user()->name }}! 🙋‍♂️</h3>
-                    <p class="card-text">Temukan pekerjaan impian dan kelola lamaran Anda dengan mudah.</p>
-                    @if(auth()->user()->profile_complete)
-                        <span class="badge bg-info bg-opacity-25 text-info">
-                            <i class="bi bi-check-circle me-1"></i> Profil Lengkap
-                        </span>
-                    @else
-                        <span class="badge bg-warning bg-opacity-25 text-warning">
-                            <i class="bi bi-exclamation-triangle me-1"></i> Lengkapi Profil
-                        </span>
-                    @endif
-                </div>
+    <div class="card border-0 shadow-lg bg-light mb-5">
+        <div class="card-body d-flex align-items-center">
+            <i class="bi bi-person-badge display-4 text-info me-4"></i>
+            <div>
+                <h3 class="fw-bold mb-1">Selamat datang, {{ auth()->user()->name }}! 🙋‍♂️</h3>
+                <p class="mb-0">Temukan pekerjaan impian dan kelola lamaran Anda dengan mudah.</p>
             </div>
         </div>
     </div>
 
     <!-- Stats Row -->
-    <div class="row g-4 mb-4">
-        <!-- Active Applications -->
-        <div class="col-xl-4 col-md-6">
-            <div class="card border-start border-start-4 border-start-primary h-100">
+    <div class="row g-4 mb-5">
+        <!-- Lamaran Aktif -->
+        <div class="col-md-4">
+            <div class="card h-100 border-start border-5 border-primary shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Lamaran Aktif</h6>
-                            <h3 class="mb-0">{{ $activeApplications ?? 0 }}</h3>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-file-earmark-text display-6 text-primary opacity-25"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('user.applications.index') }}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-arrow-right me-1"></i> Lihat Semua
-                        </a>
-                    </div>
+                    <h6 class="text-muted">Lamaran Aktif</h6>
+                    <h3 class="fw-bold">{{ $activeApplications ?? 0 }}</h3>
+                    <a href="{{ route('applications.index') }}" class="btn btn-outline-primary mt-3">Lihat Semua</a>
                 </div>
             </div>
         </div>
 
-        <!-- Available Jobs -->
-        <div class="col-xl-4 col-md-6">
-            <div class="card border-start border-start-4 border-start-success h-100">
+        <!-- Lowongan Tersedia -->
+        <div class="col-md-4">
+            <div class="card h-100 border-start border-5 border-success shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Lowongan Tersedia</h6>
-                            <h3 class="mb-0">{{ $availableJobs ?? 0 }}</h3>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-briefcase display-6 text-success opacity-25"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-arrow-right me-1"></i> Cari Lowongan
-                        </a>
-                    </div>
+                    <h6 class="text-muted">Lowongan Tersedia</h6>
+                    <h3 class="fw-bold">{{ $availableJobs ?? 0 }}</h3>
+                    <a href="{{ route('jobs.index') }}" class="btn btn-outline-success mt-3">Cari Lowongan</a>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="col-xl-4 col-md-6">
-            <div class="card border-start border-start-4 border-start-warning h-100">
+        <!-- Aksi Cepat -->
+        <div class="col-md-4">
+            <div class="card h-100 border-start border-5 border-warning shadow-sm">
                 <div class="card-body">
-                    <h6 class="fw-semibold text-warning mb-3">Aksi Cepat</h6>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('jobs.index') }}" class="btn btn-warning">
-                            <i class="bi bi-search me-1"></i> Cari Pekerjaan
-                        </a>
-                        <a href="{{ route('user.profile') }}" class="btn btn-outline-primary">
-                            <i class="bi bi-person-lines-fill me-1"></i> Profil Saya
-                        </a>
-                    </div>
+                    <h6 class="text-muted mb-3">Aksi Cepat</h6>
+                    <a href="{{ route('jobs.index') }}" class="btn btn-warning w-100 mb-2">
+                        <i class="bi bi-search me-1"></i> Cari Pekerjaan
+                    </a>
+                    <a href="{{ route('user.dashboard') }}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-person-lines-fill me-1"></i> Profil Saya
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recommended Jobs -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom-0 py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-stars me-2"></i>Rekomendasi Untuk Anda</h5>
-                <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-secondary">
-                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
-                </a>
-            </div>
-        </div>
-        <div class="card-body">
-            @if($recommendedJobs && $recommendedJobs->count() > 0)
-                <div class="row g-4">
-                    @foreach($recommendedJobs as $job)
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
+   <!-- Rekomendasi -->
+<div class="card shadow mb-5 border-0">
+    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-primary"><i class="bi bi-stars me-2"></i>Rekomendasi Untuk Anda</h5>
+        <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-secondary">Lihat Semua</a>
+    </div>
+    <div class="card-body">
+        @php
+            $filteredJobs = $recommendedJobs->where('deadline', '>', now());
+        @endphp
+
+        @if($filteredJobs->count())
+            <div class="row g-4">
+                @foreach($filteredJobs as $job)
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center shadow-sm border-1 border-light rounded-4">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">
-                                        {{ $job->category->name ?? 'Umum' }}
+                                {{-- Logo / Inisial --}}
+                                @if($job->company && $job->company->logo)
+                                    <img src="{{ asset('storage/' . $job->company->logo) }}"
+                                         class="rounded-circle mb-3"
+                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                         alt="{{ $job->company->name }}">
+                                @else
+                                    <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center mx-auto mb-3"
+                                         style="width: 80px; height: 80px; font-size: 24px;">
+                                        {{ strtoupper(substr($job->company->name ?? '?', 0, 1)) }}
+                                    </div>
+                                @endif
+
+                                {{-- Judul & Perusahaan --}}
+                                <h5 class="fw-bold text-primary">{{ $job->title }}</h5>
+                                <p class="text-muted mb-1"><i class="bi bi-building me-1"></i> {{ $job->company->name }}</p>
+
+                                {{-- Info Badge --}}
+                                <div class="d-flex flex-wrap justify-content-center gap-2 my-2">
+                                    <span class="badge bg-primary-subtle text-primary">
+                                        <i class="bi bi-geo-alt me-1"></i> {{ $job->location }}
                                     </span>
-                                    <small class="text-muted">
-                                        {{ $job->created_at->diffForHumans() }}
-                                    </small>
+                                    <span class="badge bg-info-subtle text-info">
+                                        <i class="bi bi-clock me-1"></i> {{ $job->job_type }}
+                                    </span>
+                                    @if($job->deadline)
+                                        <span class="badge bg-warning-subtle text-warning">
+                                            <i class="bi bi-calendar me-1"></i> {{ $job->deadline->format('d M Y') }}
+                                        </span>
+                                    @endif
                                 </div>
-                                <h5 class="card-title">{{ $job->title }}</h5>
-                                <p class="card-text text-muted">
-                                    {{ Str::limit($job->description, 120) }}
+
+                                {{-- Deskripsi --}}
+                                <p class="small text-muted mt-2">
+                                    {{ Str::limit(strip_tags($job->description), 90) }}
                                 </p>
-                                <div class="d-flex align-items-center mt-4">
-                                    <div class="flex-shrink-0">
-                                        <div class="avatar-sm">
-                                            <span class="avatar-title bg-light text-dark rounded-circle">
-                                                {{ strtoupper(substr($job->company->name, 0, 1)) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">{{ $job->company->name }}</h6>
-                                        <small class="text-muted">{{ $job->location }}</small>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-sm btn-primary">
-                                            Lamar <i class="bi bi-arrow-right ms-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
+
+                                {{-- Tombol --}}
+                                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-outline-primary w-100 rounded-pill mt-3">
+                                    <i class="bi bi-eye me-1"></i> Lihat Detail
+                                </a>
                             </div>
                         </div>
                     </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-4">
+                <i class="bi bi-emoji-frown display-6 text-muted mb-3"></i>
+                <p class="text-muted">Belum ada rekomendasi untuk Anda saat ini</p>
+                <a href="{{ route('jobs.index') }}" class="btn btn-primary">
+                    <i class="bi bi-search me-1"></i> Cari Lowongan
+                </a>
+            </div>
+        @endif
+    </div>
+</div>
+
+
+    <!-- Lamaran Saya -->
+    <div class="card shadow">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-primary"><i class="bi bi-file-earmark-person me-2"></i>Lamaran Saya</h5>
+        </div>
+        <div class="card-body p-0">
+            @if($userApplications && $userApplications->count())
+                <div class="list-group list-group-flush">
+                    @foreach($userApplications as $application)
+                        <div class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ $application->job->title }}</h6>
+                                <small class="text-muted">Status:
+                                    <span class="badge bg-{{
+                                        $application->status == 'pending' ? 'warning' :
+                                        ($application->status == 'accepted' ? 'success' : 'danger')
+                                    }}">
+                                        {{ ucfirst($application->status) }}
+                                    </span>
+                                </small>
+                            </div>
+                            <a href="{{ route('jobs.show', $application->job->id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i> Detail
+                            </a>
+                        </div>
                     @endforeach
                 </div>
             @else
                 <div class="text-center py-4">
-                    <i class="bi bi-emoji-frown display-6 text-muted mb-3"></i>
-                    <p class="text-muted">Belum ada rekomendasi untuk Anda saat ini</p>
-                    <a href="{{ route('jobs.index') }}" class="btn btn-primary">
-                        <i class="bi bi-search me-1"></i> Cari Lowongan
-                    </a>
+                    <i class="bi bi-person-x display-6 text-muted mb-3"></i>
+                    <p class="text-muted">Anda belum memiliki lamaran saat ini.</p>
                 </div>
             @endif
         </div>

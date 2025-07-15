@@ -10,7 +10,7 @@
                 <h2 class="fw-bold mb-0">
                     <i class="bi bi-tag-fill me-2"></i>Tambah Kategori Baru
                 </h2>
-                <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -30,7 +30,7 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route('categories.store') }}" method="POST">
+                    <form action="{{ route('admin.categories.store') }}" method="POST">
                         @csrf
                         
                         <div class="mb-4">

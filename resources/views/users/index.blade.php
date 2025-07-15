@@ -140,7 +140,7 @@
                                         @endif
                                         
                                         @if($user->role === 'company' && $user->company)
-                                            <a href="{{ route('companies.show', $user->company->id) }}" 
+                                            <a href="{{ route('admin.companies.show', $user->company->id) }}" 
                                                class="btn btn-sm btn-outline-info" title="Lihat Perusahaan">
                                                 <i class="bi bi-building"></i>
                                             </a>

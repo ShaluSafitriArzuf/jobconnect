@@ -39,9 +39,7 @@
                                 <tr>
                                     <td class="ps-4 align-middle">
                                         <h6 class="mb-1">{{ $application->job->title ?? '-' }}</h6>
-                                        <small class="text-muted">
-                                            {{ $application->job->location ?? '-' }}
-                                        </small>
+                                        <small class="text-muted">{{ $application->job->location ?? '-' }}</small>
                                     </td>
                                     <td class="align-middle">
                                         {{ $application->job->company->name ?? '-' }}
@@ -84,9 +82,7 @@
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">
-                                                    Detail Lamaran - {{ $application->job->title }}
-                                                </h5>
+                                                <h5 class="modal-title">Detail Lamaran - {{ $application->job->title }}</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
@@ -94,7 +90,6 @@
                                                     <h6 class="fw-bold">Perusahaan</h6>
                                                     <p>{{ $application->job->company->name }}</p>
                                                 </div>
-                                                
                                                 <div class="mb-4">
                                                     <h6 class="fw-bold">Status Lamaran</h6>
                                                     <p>
@@ -107,14 +102,12 @@
                                                         @endif
                                                     </p>
                                                 </div>
-                                                
                                                 <div class="mb-4">
-                                                    <h6 class="fw-bold">Surat Lamaran</h6>
+                                                    <h6 class="fw-bold">Pesan Pengantar / Motivasi</h6>
                                                     <div class="p-3 bg-light rounded">
                                                         {!! nl2br(e($application->cover_letter)) !!}
                                                     </div>
                                                 </div>
-                                                
                                                 <div>
                                                     <h6 class="fw-bold">Tanggal Lamar</h6>
                                                     <p>{{ $application->created_at->translatedFormat('l, d F Y H:i') }}</p>

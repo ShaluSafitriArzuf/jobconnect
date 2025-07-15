@@ -1,124 +1,114 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Pelamar - ' . $job->title)
+@section('title', 'Daftar Pelamar')
 
 @section('content')
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">
-            <i class="bi bi-people-fill me-2"></i>Daftar Pelamar
-            <span class="text-muted fs-5">({{ $job->title }})</span>
-        </h2>
-        <a href="{{ route('jobs.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
-    </div>
+    <h2 class="fw-bold mb-4"><i class="bi bi-person-lines-fill me-2"></i>Daftar Pelamar</h2>
 
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    @if ($job->applications->isEmpty())
-        <div class="card shadow-sm">
-            <div class="card-body text-center py-5">
-                <i class="bi bi-people display-5 text-muted mb-3"></i>
-                <h5 class="text-muted">Belum ada pelamar untuk lowongan ini</h5>
-            </div>
-        </div>
-    @else
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Nama Pelamar</th>
-                                <th>Email</th>
-                                <th>Surat Lamaran</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($job->applications as $application)
-                                <tr>
-                                    <td class="ps-4 align-middle">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-sm me-3">
-                                                <span class="avatar-title bg-primary rounded-circle">
-                                                    {{ strtoupper(substr($application->user->name, 0, 1)) }}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0">{{ $application->user->name }}</h6>
-                                                <small class="text-muted">{{ $application->created_at->diffForHumans() }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="mailto:{{ $application->user->email }}">{{ $application->user->email }}</a>
-                                    </td>
-                                    <td class="align-middle">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" 
-                                            data-bs-target="#coverLetterModal{{ $application->id }}">
-                                            Lihat Surat
-                                        </button>
-                                    </td>
-                                    <td class="align-middle">
-                                        <span class="badge rounded-pill 
-                                            @if($application->status == 'accepted') bg-success
-                                            @elseif($application->status == 'rejected') bg-danger
-                                            @else bg-secondary
-                                            @endif">
-                                            {{ ucfirst($application->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="pe-4 align-middle">
-                                        <form action="{{ route('applications.updateStatus', $application->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="input-group input-group-sm">
-                                                <select name="status" class="form-select form-select-sm">
-                                                    <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                    <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
-                                                    <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                                                </select>
-                                                <button class="btn btn-primary" type="submit" title="Update Status">
-                                                    <i class="bi bi-check-lg"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </td>
-                                </tr>
+    @if ($applications->count())
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nama Pelamar</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Tanggal Lamar</th>
+                        <th>CV</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($applications as $application)
+                        <tr>
+                            <td>{{ $application->user->name }}</td>
+                            <td>{{ $application->user->email }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('applications.updateStatus', $application->id) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <select name="status" class="form-select" onchange="confirmChange(this)">
+                                        <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Diterima</option>
+                                        <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>{{ $application->created_at->format('d M Y') }}</td>
+                            <td>
+                                @if ($application->cv_path)
+                                    <a href="{{ asset('storage/' . $application->cv_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">Lihat CV</a>
+                                @else
+                                    <em>Tidak ada</em>
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $application->id }}">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
 
-                                <!-- Cover Letter Modal -->
-                                <div class="modal fade" id="coverLetterModal{{ $application->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Surat Lamaran - {{ $application->user->name }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="p-3 bg-light rounded">
-                                                    {!! nl2br(e($application->cover_letter)) !!}
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                            </div>
-                                        </div>
+                        <!-- Modal Detail -->
+                        <div class="modal fade" id="detailModal{{ $application->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detail Lamaran</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Nama:</strong> {{ $application->user->name }}</p>
+                                        <p><strong>Email:</strong> {{ $application->user->email }}</p>
+                                        <p><strong>Domisili:</strong> {{ $application->domicile }}</p>
+                                        <p><strong>Telepon:</strong> {{ $application->phone }}</p>
+                                        <p><strong>Pengalaman:</strong> {{ $application->experience }}</p>
+                                        <p><strong>Pendidikan:</strong> {{ $application->education }}</p>
+                                        <p><strong>Ketersediaan:</strong> 
+                                            @switch($application->availability)
+                                                @case('segera') Segera @break
+                                                @case('1_minggu') Dalam 1 Minggu @break
+                                                @case('1_bulan') Dalam 1 Bulan @break
+                                                @default - 
+                                            @endswitch
+                                        </p>
+                                        <p><strong>Pesan Pengantar / Motivasi:</strong><br>{!! nl2br(e($application->cover_letter)) !!}</p>
+                                        @if ($application->portfolio_link)
+                                            <p><strong>Portofolio:</strong> <a href="{{ $application->portfolio_link }}" target="_blank">Lihat</a></p>
+                                        @endif
+                                        @if ($application->linkedin_link)
+                                            <p><strong>LinkedIn:</strong> <a href="{{ $application->linkedin_link }}" target="_blank">Lihat</a></p>
+                                        @endif
                                     </div>
                                 </div>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+
+        <div class="mt-3">
+            {{ $applications->links() }}
+        </div>
+    @else
+        <div class="alert alert-info text-center">Belum ada pelamar untuk lowongan ini.</div>
     @endif
 </div>
+
+<!-- Konfirmasi Ubah Status -->
+<script>
+    function confirmChange(select) {
+        if (confirm('Yakin ingin mengubah status pelamar ini?')) {
+            select.form.submit();
+        } else {
+            window.location.reload();
+        }
+    }
+</script>
 @endsection

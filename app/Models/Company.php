@@ -22,12 +22,21 @@ class Company extends Model
     'logo'
 ];
 
+// app/Models/Company.php
 public function user()
 {
-    return $this->belongsTo(User::class, 'shalu_user_id');
+    return $this->belongsTo(User::class);
 }
-    public function jobs()
+
+public function jobs()
 {
     return $this->hasMany(Job::class, 'shalu_company_id');
 }
+
+
+public function applications()
+{
+    return $this->hasManyThrough(Application::class, Job::class);
+}
+
 }

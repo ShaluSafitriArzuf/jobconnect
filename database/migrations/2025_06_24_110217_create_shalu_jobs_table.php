@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('location');
             $table->string('job_type');
             $table->date('deadline');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

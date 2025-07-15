@@ -10,7 +10,7 @@
                 <h2 class="fw-bold mb-0">
                     <i class="bi bi-briefcase me-2"></i>{{ $job->title }}
                 </h2>
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.jobs.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -18,29 +18,48 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div class="d-flex align-items-center mb-3">
-                            {{-- LOGO Perusahaan --}}
-                            @if($job->company && $job->company->logo)
-                                <img src="{{ asset('storage/' . $job->company->logo) }}"
-                                     alt="Logo {{ $job->company->name }}"
-                                     class="rounded-3 me-3"
-                                     style="width: 80px; height: 80px; object-fit: cover;">
-                            @else
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
                                 <div class="avatar-sm me-3">
-                                    <span class="avatar-title bg-light text-dark rounded-circle d-inline-flex align-items-center justify-content-center"
-                                          style="width: 80px; height: 80px; font-size: 24px;">
-                                        {{ strtoupper(substr($job->company->name ?? '?', 0, 1)) }}
+                                    <span class="avatar-title bg-light text-dark rounded-circle">
+                                        {{ strtoupper(substr($job->company->name, 0, 1)) }}
                                     </span>
                                 </div>
-                            @endif
-
-                            {{-- Info Perusahaan --}}
-                            <div>
-                                <h5 class="mb-0">{{ $job->company->name ?? 'Perusahaan Tidak Diketahui' }}</h5>
-                                <small class="text-muted">{{ $job->company->location ?? '' }}</small>
+                                <div>
+                                    <h5 class="mb-0">{{ $job->company->name ?? 'Perusahaan Tidak Diketahui' }}</h5>
+                                    <small class="text-muted">{{ $job->company->location ?? '' }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                @if($job->category)
+                                <span class="badge bg-primary bg-opacity-10 text-primary">
+                                    <i class="bi bi-tag me-1"></i> {{ $job->category->name }}
+                                </span>
+                                @endif
+                                
+                                <span class="badge bg-info bg-opacity-10 text-info">
+                                    <i class="bi bi-clock me-1"></i> {{ $job->job_type }}
+                                </span>
+                                
+                                <span class="badge bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-geo-alt me-1"></i> {{ $job->location }}
+                                </span>
+                                
+                                @if($job->deadline)
+                                <span class="badge bg-warning bg-opacity-10 text-warning">
+                                    <i class="bi bi-calendar-x me-1"></i> {{ $job->deadline->format('d M Y') }}
+                                </span>
+                                @endif
+                                
+                                @if($job->salary)
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                    <i class="bi bi-cash-coin me-1"></i> {{ $job->salary }}
+                                </span>
+                                @endif
                             </div>
                         </div>
-
+                        
                         <div class="text-end">
                             <small class="text-muted d-block">
                                 Diposting {{ $job->created_at->diffForHumans() }}
@@ -51,34 +70,6 @@
                                 <span class="badge bg-success">Masih Dibuka</span>
                             @endif
                         </div>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        @if($job->category)
-                        <span class="badge bg-primary bg-opacity-10 text-primary">
-                            <i class="bi bi-tag me-1"></i> {{ $job->category->name }}
-                        </span>
-                        @endif
-                        
-                        <span class="badge bg-info bg-opacity-10 text-info">
-                            <i class="bi bi-clock me-1"></i> {{ $job->job_type }}
-                        </span>
-                        
-                        <span class="badge bg-success bg-opacity-10 text-success">
-                            <i class="bi bi-geo-alt me-1"></i> {{ $job->location }}
-                        </span>
-                        
-                        @if($job->deadline)
-                        <span class="badge bg-warning bg-opacity-10 text-warning">
-                            <i class="bi bi-calendar-x me-1"></i> {{ $job->deadline->format('d M Y') }}
-                        </span>
-                        @endif
-                        
-                        @if($job->salary)
-                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                            <i class="bi bi-cash-coin me-1"></i> {{ $job->salary }}
-                        </span>
-                        @endif
                     </div>
 
                     <hr>
@@ -120,19 +111,15 @@
                         
                         <div class="d-flex gap-2">
                             @auth
-                                @if(auth()->user()->role === 'company' && auth()->user()->company && auth()->user()->company->id === $job->shalu_company_id)
-                                    <a href="{{ route('company.jobs.edit', $job->id) }}" class="btn btn-warning">
+                                @if(auth()->user()->role === 'company' && auth()->user()->id == $job->company->user_id)
+                                    <a href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning">
                                         <i class="bi bi-pencil me-1"></i> Edit
                                     </a>
                                     <a href="{{ route('applications.applicants', $job->id) }}" class="btn btn-primary">
                                         <i class="bi bi-people me-1"></i> Lihat Pelamar
                                     </a>
                                 @elseif(auth()->user()->role === 'user')
-                                    @if($job->deadline && $job->deadline->isPast())
-                                        <button class="btn btn-secondary" disabled>
-                                            <i class="bi bi-lock-fill me-1"></i> Lowongan Ditutup
-                                        </button>
-                                    @elseif(isset($hasApplied) && $hasApplied)
+                                    @if($hasApplied)
                                         <button class="btn btn-success" disabled>
                                             <i class="bi bi-check-circle me-1"></i> Sudah Dilamar
                                         </button>
@@ -149,7 +136,6 @@
                             @endauth
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

@@ -9,29 +9,9 @@ use App\Http\Controllers\{
     ApplicationController,
     UserController
 };
-use App\Http\Middleware\RoleMiddleware;
 
 // ===================
-// ROUTE PUBLIK UNTUK LOWONGAN
-// ===================
-Route::controller(JobController::class)->group(function () {
-    Route::get('/jobs', 'index')->name('jobs.index');
-    Route::get('/jobs/{id}', 'show')->where('id', '[0-9]+')->name('jobs.show');
-});
-
-// ===================
-// ROUTE AUTENTIKASI (PUBLIK)
-// ===================
-Route::controller(AuthController::class)->group(function () {
-    Route::get('/login', 'formLogin')->name('login');
-    Route::post('/login', 'login');
-    Route::get('/register', 'formRegister')->name('register');
-    Route::post('/register', 'register');
-    Route::post('/logout', 'destroy')->name('logout');
-});
-
-// ===================
-// ROUTE UTAMA (HOME)
+// ROUTE PUBLIK
 // ===================
 Route::get('/', function () {
     if (auth()->check()) {
@@ -42,106 +22,86 @@ Route::get('/', function () {
             default => redirect()->route('login'),
         };
     }
-    return redirect()->route('jobs.index');
+
+    // ✅ Ini menampilkan landing.blade.php kalau belum login
+    return view('landing');
 })->name('home');
 
+Route::controller(JobController::class)->group(function () {
+    Route::get('/jobs', 'publicIndex')->name('jobs.index');
+    Route::get('/jobs/{id}', 'show')->where('id', '[0-9]+')->name('jobs.show');
+});
+
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/login', 'formLogin')->name('login');
+    Route::post('/login', 'login');
+    Route::get('/register', 'formRegister')->name('register');
+    Route::post('/register', 'register');
+    Route::post('/logout', 'destroy')->name('logout');
+});
+
+
 // ===================
-// ROUTE BERDASARKAN ROLE (DENGAN AUTH)
+// ROUTE ADMIN
 // ===================
-Route::middleware(['auth'])->group(function () {
-    // ROUTE UNTUK ADMIN
-    Route::middleware([RoleMiddleware::class . ':admin'])->prefix('admin')->group(function () {
-        // Dashboard Admin
-        Route::get('/dashboard', [UserController::class, 'adminDashboard'])->name('admin.dashboard');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'adminDashboard'])->name('admin.dashboard');
 
-        // Manajemen User
-        Route::resource('users', UserController::class)->names([
-            'index' => 'admin.users.index',
-            'create' => 'admin.users.create',
-            'store' => 'admin.users.store',
-            'show' => 'admin.users.show',
-            'edit' => 'admin.users.edit',
-            'update' => 'admin.users.update',
-            'destroy' => 'admin.users.destroy'
-        ]);
+    Route::resource('users', UserController::class)->names('admin.users');
 
-        // Manajemen Perusahaan
-        Route::resource('companies', CompanyController::class)->names([
-            'index' => 'admin.companies.index',
-            'create' => 'admin.companies.create',
-            'store' => 'admin.companies.store',
-            'show' => 'admin.companies.show',
-            'edit' => 'admin.companies.edit',
-            'update' => 'admin.companies.update',
-            'destroy' => 'admin.companies.destroy'
-        ]);
+    Route::resource('companies', CompanyController::class)
+        ->except(['create', 'store'])
+        ->names('admin.companies');
 
-        // Manajemen Kategori
-        Route::resource('categories', CategoryController::class)->names([
-            'index' => 'admin.categories.index',
-            'create' => 'admin.categories.create',
-            'store' => 'admin.categories.store',
-            'show' => 'admin.categories.show',
-            'edit' => 'admin.categories.edit',
-            'update' => 'admin.categories.update',
-            'destroy' => 'admin.categories.destroy'
-        ]);
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 
-        // Manajemen Lowongan
-        Route::resource('jobs', JobController::class)->except(['show'])->names([
-            'index' => 'admin.jobs.index',
-            'create' => 'admin.jobs.create',
-            'store' => 'admin.jobs.store',
-            'edit' => 'admin.jobs.edit',
-            'update' => 'admin.jobs.update',
-            'destroy' => 'admin.jobs.destroy'
-        ]);
-        Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-            Route::resource('users', UserController::class)->names([
-                'index' => 'admin.users.index',
-                'create' => 'admin.users.create',
-                'store' => 'admin.users.store',
-                'show' => 'admin.users.show',
-                'edit' => 'admin.users.edit',
-                'update' => 'admin.users.update',
-                'destroy' => 'admin.users.destroy'
-            ]);
-        });
+    Route::get('/jobs', [JobController::class, 'adminIndex'])->name('admin.jobs.index');
+    Route::get('/jobs/create', [JobController::class, 'create'])->name('admin.jobs.create');
+    Route::post('/jobs', [JobController::class, 'store'])->name('admin.jobs.store');
+    Route::get('/jobs/{id}/edit', [JobController::class, 'edit'])->name('admin.jobs.edit');
+    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('admin.jobs.update');
+    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('admin.jobs.destroy');
 
-        // Manajemen Lamaran
-        Route::get('/applications', [ApplicationController::class, 'index'])->name('admin.applications.index');
-    });
+    Route::get('/applications', [ApplicationController::class, 'index'])->name('admin.applications.index');
+});
 
-    // ROUTE UNTUK PERUSAHAAN
-    Route::middleware([RoleMiddleware::class . ':company'])->prefix('company')->group(function () {
-        // Dashboard Perusahaan
-        Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('company.dashboard');
 
-        // Manajemen Lowongan
-        Route::resource('jobs', JobController::class)->except(['index', 'show']);
+// ===================
+// ROUTE COMPANY
+// ===================
+Route::middleware(['auth', 'role:company'])->prefix('company')->group(function () {
 
-        // Manajemen Pelamar
-        Route::get('/jobs/{id}/applicants', [ApplicationController::class, 'applicants'])
-            ->name('company.applicants');
-        Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus'])
-            ->name('company.applications.updateStatus');
+    // Cek apakah sudah punya profil
+    Route::get('/profile/create', [CompanyController::class, 'create'])->name('company.profile.create');
+    Route::post('/profile', [CompanyController::class, 'store'])->name('company.profile.store');
 
-        // Profil Perusahaan
-        Route::get('/profile', [CompanyController::class, 'edit'])->name('company.profile');
-        Route::put('/profile', [CompanyController::class, 'update'])->name('company.profile.update');
-    });
+    Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('company.dashboard');
+    Route::get('/profile', [CompanyController::class, 'editProfile'])->name('company.profile');
+    Route::put('/profile', [CompanyController::class, 'updateProfile'])->name('company.profile.update');
 
-    // ROUTE UNTUK USER/PENCARI KERJA
-    Route::middleware([RoleMiddleware::class . ':user'])->prefix('user')->group(function () {
-        // Dashboard User
-        Route::get('/dashboard', [UserController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/jobs', [JobController::class, 'companyIndex'])->name('company.jobs.index');
+    Route::get('/jobs/create', [JobController::class, 'create'])->name('company.jobs.create');
+    Route::post('/jobs', [JobController::class, 'store'])->name('company.jobs.store');
+    Route::get('/jobs/{id}/edit', [JobController::class, 'edit'])->name('company.jobs.edit');
+    Route::put('/jobs/{id}', [JobController::class, 'update'])->name('company.jobs.update');
+    Route::delete('/jobs/{id}', [JobController::class, 'destroy'])->name('company.jobs.destroy');
+    Route::get('/jobs/{id}', [JobController::class, 'show'])->name('company.jobs.show');
+    
 
-        // Manajemen Lamaran
-        Route::get('/applications', [ApplicationController::class, 'userApplications'])
-            ->name('user.applications.index');
-        Route::get('/applications/create/{jobId}', [ApplicationController::class, 'create'])
-            ->name('user.applications.create');
-        Route::post('/applications/store/{jobId}', [ApplicationController::class, 'store'])
-            ->name('user.applications.store');
-    });
+    Route::get('/jobs/{id}/applicants', [ApplicationController::class, 'applicants'])->name('applications.applicants');
+    Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus'])->name('applications.updateStatus');
+    Route::get('/company/applications', [ApplicationController::class, 'index'])->name('company.applications.index');
+
+});
+
+
+// ===================
+// ROUTE USER
+// ===================
+Route::middleware(['auth', 'role:user'])->prefix('user')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/applications', [ApplicationController::class, 'userApplications'])->name('applications.index');
+    Route::get('/applications/create/{jobId}', [ApplicationController::class, 'create'])->name('applications.create');
+    Route::post('/applications/{job}', [ApplicationController::class, 'store'])->name('applications.store');
+    
 });

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Perusahaan - ' . $company->name)
+@section('title', 'Edit Profil Perusahaan')
 
 @section('content')
 <div class="container py-4">
@@ -8,10 +8,9 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold mb-0">
-                    <i class="bi bi-building me-2"></i>Edit Perusahaan
-                    <span class="text-muted fs-5">({{ $company->name }})</span>
+                    <i class="bi bi-building me-2"></i>Edit Profil Perusahaan
                 </h2>
-                <a href="{{ route('admin.companies.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('company.dashboard') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -31,20 +30,20 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route('admin.companies.update', $company->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('company.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        
+
                         <!-- Nama Perusahaan -->
                         <div class="mb-4">
                             <label for="name" class="form-label fw-bold">
                                 <i class="bi bi-building me-1"></i>Nama Perusahaan
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" name="name" id="name" 
-                                class="form-control @error('name') is-invalid @enderror" 
+                            <input type="text" name="name" id="name"
+                                class="form-control @error('name') is-invalid @enderror"
                                 placeholder="Contoh: PT. JobConnect Indonesia"
-                                value="{{ old('name', $company->name) }}" 
+                                value="{{ old('name', $company->name) }}"
                                 required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -57,8 +56,8 @@
                                 <i class="bi bi-envelope me-1"></i>Email Perusahaan
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="email" name="email" id="email" 
-                                class="form-control @error('email') is-invalid @enderror" 
+                            <input type="email" name="email" id="email"
+                                class="form-control @error('email') is-invalid @enderror"
                                 placeholder="Contoh: info@company.com"
                                 value="{{ old('email', $company->email) }}"
                                 required>
@@ -75,25 +74,25 @@
                                         <i class="bi bi-geo-alt me-1"></i>Lokasi
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" name="location" id="location" 
-                                        class="form-control @error('location') is-invalid @enderror" 
+                                    <input type="text" name="location" id="location"
+                                        class="form-control @error('location') is-invalid @enderror"
                                         placeholder="Contoh: Jakarta Pusat"
-                                        value="{{ old('location', $company->location) }}" 
+                                        value="{{ old('location', $company->location) }}"
                                         required>
                                     @error('location')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <!-- Industri -->
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="industry" class="form-label fw-bold">
                                         <i class="bi bi-briefcase me-1"></i>Industri
                                     </label>
-                                    <input type="text" name="industry" id="industry" 
-                                        class="form-control @error('industry') is-invalid @enderror" 
+                                    <input type="text" name="industry" id="industry"
+                                        class="form-control @error('industry') is-invalid @enderror"
                                         placeholder="Contoh: Teknologi Informasi"
                                         value="{{ old('industry', $company->industry) }}">
                                     @error('industry')
@@ -135,7 +134,7 @@
                                     </div>
                                 </div>
                             @endif
-                            <input type="file" name="logo" id="logo" 
+                            <input type="file" name="logo" id="logo"
                                 class="form-control @error('logo') is-invalid @enderror"
                                 accept="image/*">
                             @error('logo')

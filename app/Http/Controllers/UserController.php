@@ -19,20 +19,32 @@ class UserController extends Controller
             'totalApplications' => Application::count()
         ]);
     }
-    public function userDashboard()
-    {
-        $user = auth()->user();
+ public function userDashboard()
+{
+    $user = auth()->user();
 
-        return view('dashboard.user', [
-            'activeApplications' => $user->applications()->count(),
-            'availableJobs' => Job::where('status', 'active')->count(),
-            'recommendedJobs' => Job::with(['company', 'category'])
-                ->active()
-                ->latest()
-                ->take(5)
-                ->get()
-        ]);
-    }
+    return view('dashboard.user', [
+        // Hitung semua lamaran user yang status-nya pending atau diterima
+        'activeApplications' => $user->applications()
+            ->whereIn('status', ['pending', 'accepted'])
+            ->count(),
+
+        // Total lowongan kerja yang masih tersedia (bisa disesuaikan dengan logic deadline/aktif)
+        'availableJobs' => Job::where('deadline', '>=', now())->count(), // Pastikan ada field 'deadline' ya
+
+        // Ambil lamaran user untuk ditampilkan (opsional, bisa dipakai nanti di blade)
+        'userApplications' => $user->applications()
+            ->with('job')
+            ->latest()
+            ->get(),
+
+        // Rekomendasi lowongan kerja terbaru
+        'recommendedJobs' => Job::with(['company', 'category'])
+            ->latest()
+            ->take(5)
+            ->get()
+    ]);
+}
 
     public function index()
     {
@@ -92,5 +104,17 @@ class UserController extends Controller
             return $this->userDashboard();
         }
     }
+    public function applicationsIndex()
+{
+    $user = auth()->user();
+
+    $applications = $user->applications()
+        ->with('job.company') // biar bisa akses $application->job->company->name
+        ->latest()
+        ->paginate(10);
+
+    return view('applications.index', compact('applications'));
+}
+
 
 }

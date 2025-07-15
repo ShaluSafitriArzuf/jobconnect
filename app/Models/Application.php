@@ -12,11 +12,20 @@ class Application extends Model
     protected $table = 'shalu_applications';
 
     protected $fillable = [
-        'shalu_user_id', // Sesuaikan dengan migrasi
-        'shalu_job_id',  // Sesuaikan dengan migrasi
+        'shalu_user_id',
+        'shalu_job_id',
         'cover_letter',
-        'status'         // Tambahkan jika diperlukan
+        'cv_path',
+        'education',
+        'experience',
+        'domicile',
+        'availability',
+        'phone',
+        'portfolio_link',
+        'linkedin_link',
+        'status',
     ];
+
 
     public function user()
     {

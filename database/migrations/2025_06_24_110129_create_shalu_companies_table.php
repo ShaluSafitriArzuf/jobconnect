@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('shalu_companies', function (Blueprint $table) {
         $table->id();
-       $table->foreignId('shalu_user_id')->nullable()->constrained('shalu_users');
+        $table->foreignId('shalu_user_id')->nullable()->constrained('shalu_users')->onDelete('set null');
         $table->string('name');
         $table->string('industry')->nullable();
         $table->string('email')->unique();

@@ -10,7 +10,7 @@
                 <h2 class="fw-bold mb-0">
                     <i class="bi bi-file-earmark-plus me-2"></i>Buat Lowongan Baru
                 </h2>
-                <a href="{{ route(auth()->user()->role . '.jobs.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('company.jobs.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>
@@ -30,8 +30,16 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route(auth()->user()->role . '.jobs.store') }}" method="POST">
+                    <form action="{{ route('company.jobs.store') }}" method="POST">
                         @csrf
+                        @if(auth()->user()->company)
+                            <input type="hidden" name="shalu_company_id" value="{{ auth()->user()->company->id }}">
+                        @else
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle-fill"></i> 
+                                Akun perusahaan Anda belum lengkap. Silakan lengkapi profil perusahaan terlebih dahulu.
+                            </div>
+                        @endif
 
                         <!-- Input Judul Lowongan -->
                         <div class="mb-4">
@@ -62,7 +70,6 @@
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="form-text">Gunakan format yang jelas dan informatif</div>
                         </div>
 
                         <div class="row g-3">
@@ -112,21 +119,25 @@
                             <!-- Input Kategori -->
                             <div class="col-md-6">
                                 <div class="mb-4">
-                                    <label for="category_id" class="form-label fw-bold">
+                                    <label for="shalu_category_id" class="form-label fw-bold">
                                         <i class="bi bi-tag me-1"></i>Kategori
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select name="category_id" id="category_id" 
-                                        class="form-select @error('category_id') is-invalid @enderror" 
-                                        required>
-                                        <option value="">-- Pilih Kategori --</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('category_id')
+                                    @if($categories->count() > 0)
+                                        <select name="shalu_category_id" id="shalu_category_id" 
+                                            class="form-select @error('shalu_category_id') is-invalid @enderror" 
+                                            required>
+                                            <option value="">-- Pilih Kategori --</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}" {{ old('shalu_category_id') == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <div class="alert alert-warning py-2">Tidak ada kategori tersedia</div>
+                                    @endif
+                                    @error('shalu_category_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -151,7 +162,7 @@
                             </div>
                         </div>
 
-                        <!-- Input Gaji (Opsional) -->
+                        <!-- Input Gaji -->
                         <div class="mb-4">
                             <label for="salary" class="form-label fw-bold">
                                 <i class="bi bi-cash-coin me-1"></i>Gaji

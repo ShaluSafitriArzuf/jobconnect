@@ -11,16 +11,24 @@ return new class extends Migration {
     // database/migrations/[timestamp]_create_shalu_applications_table.php
     public function up()
     {
-        // database/migrations/2025_06_24_110228_create_shalu_applications_table.php
         Schema::create('shalu_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shalu_job_id')->constrained('shalu_jobs');
-            $table->foreignId('shalu_user_id')->constrained('shalu_users');
+            $table->foreignId('shalu_job_id')->constrained('shalu_jobs')->onDelete('cascade');
+            $table->foreignId('shalu_user_id')->constrained('shalu_users')->onDelete('cascade');
             $table->text('cover_letter');
+            $table->string('cv_path')->nullable(); // ← untuk CV yang di-upload
+            $table->string('education')->nullable(); // ← pendidikan terakhir
+            $table->string('experience')->nullable(); // ← pengalaman kerja
+            $table->string('domicile')->nullable(); // ← domisili
+            $table->string('availability')->nullable(); // ← ketersediaan mulai kerja
+            $table->string('phone')->nullable(); // ← nomor telepon
+            $table->string('portfolio_link')->nullable(); // ← link ke portofolio
+            $table->string('linkedin_link')->nullable(); // ← link ke profil LinkedIn
             $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
+
 
     public function down()
     {

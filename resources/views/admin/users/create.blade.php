@@ -23,7 +23,7 @@
                 <label>Role</label>
                 <select name="role" class="form-select" required>
                     <option value="user">User</option>
-                    <option value="company">Perusahaan</option>
+                    <option value="company">company</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
