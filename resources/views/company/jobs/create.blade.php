@@ -41,7 +41,6 @@
                      class="form-control @error('title') is-invalid @enderror"
                      placeholder="Contoh: Front-End Developer"
                      value="{{ old('title') }}" required>
-              <div class="form-text">Masukkan nama posisi pekerjaan secara jelas.</div>
               @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
@@ -57,7 +56,6 @@
                   <option value="{{ $cat->id }}" @selected(old('shalu_category_id') == $cat->id)>{{ $cat->name }}</option>
                 @endforeach
               </select>
-              <div class="form-text">Pilih kategori pekerjaan yang sesuai.</div>
               @error('shalu_category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
@@ -68,9 +66,7 @@
               </label>
               <textarea name="description" id="description" rows="5"
                         class="form-control @error('description') is-invalid @enderror"
-                        placeholder="Deskripsikan tanggung jawab pekerjaan ini secara rinci"
                         required>{{ old('description') }}</textarea>
-              <div class="form-text">Minimal 100 karakter. Sertakan ruang lingkup dan peran posisi ini.</div>
               @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
@@ -80,9 +76,7 @@
                 <i class="bi bi-list-check me-1"></i>Persyaratan dan Ketentuan
               </label>
               <textarea name="requirements" id="requirements" rows="4"
-                        class="form-control @error('requirements') is-invalid @enderror"
-                        placeholder="Contoh: Minimal S1, Menguasai Laravel, Berpengalaman 2 tahun">{{ old('requirements') }}</textarea>
-              <div class="form-text">Cantumkan kualifikasi yang dibutuhkan, pisahkan dengan tanda koma atau bullet.</div>
+                        class="form-control @error('requirements') is-invalid @enderror">{{ old('requirements') }}</textarea>
               @error('requirements')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
@@ -94,9 +88,7 @@
                 </label>
                 <input type="text" name="salary" id="salary"
                        class="form-control @error('salary') is-invalid @enderror"
-                       placeholder="Contoh: Rp5.000.000 - Rp8.000.000"
                        value="{{ old('salary') }}">
-                <div class="form-text">Opsional. Sertakan rentang gaji jika perlu.</div>
                 @error('salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
 
@@ -107,7 +99,6 @@
                 </label>
                 <input type="text" name="location" id="location"
                        class="form-control @error('location') is-invalid @enderror"
-                       placeholder="Contoh: Bandung, Jawa Barat"
                        value="{{ old('location') }}" required>
                 @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
@@ -126,7 +117,6 @@
                     <option value="{{ $type }}" @selected(old('job_type')==$type)>{{ $type }}</option>
                   @endforeach
                 </select>
-                <div class="form-text">Pilih salah satu tipe pekerjaan.</div>
                 @error('job_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
 
@@ -138,7 +128,6 @@
                 <input type="date" name="deadline" id="deadline"
                        class="form-control @error('deadline') is-invalid @enderror"
                        value="{{ old('deadline') }}" required>
-                <div class="form-text">Pilih tanggal terakhir pengiriman lamaran.</div>
                 @error('deadline')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
             </div>

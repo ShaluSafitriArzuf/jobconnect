@@ -30,7 +30,7 @@
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <form action="{{ route('applications.store', $job->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('user.applications.store', $job->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">

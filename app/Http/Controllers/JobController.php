@@ -12,12 +12,29 @@ use Illuminate\Support\Facades\Validator;
 class JobController extends Controller
 {
     // 👑 Untuk Admin
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
+        $query = Job::with(['company', 'category']);
+
+        if ($request->search) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->category) {
+            $query->where('shalu_category_id', $request->category);
+        }
+
+        if ($request->job_type) {
+            $query->where('job_type', $request->job_type);
+        }
+
+        $jobs = $query->latest()->paginate(10);
+
         $categories = Category::all();
-        $jobs = Job::with('company', 'category')->latest()->paginate(10);
+
         return view('admin.jobs.index', compact('jobs', 'categories'));
     }
+
 
     // 🏢 Untuk Company
     public function companyIndex()
@@ -30,36 +47,36 @@ class JobController extends Controller
     }
 
     // 🌐 Untuk Public / Pencari Kerja
-   public function publicIndex(Request $request)
-{
-    $categories = Category::all();
+    public function publicIndex(Request $request)
+    {
+        $categories = Category::all();
 
-    $query = Job::with('company', 'category');
+        $query = Job::with('company', 'category');
 
-    // Jika user mengisi filter, baru kita filter
-    if ($request->filled('search')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->search . '%')
-              ->orWhere('description', 'like', '%' . $request->search . '%')
-              ->orWhereHas('company', function ($q2) use ($request) {
-                  $q2->where('name', 'like', '%' . $request->search . '%');
-              });
-        });
+        // Jika user mengisi filter, baru kita filter
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhereHas('company', function ($q2) use ($request) {
+                        $q2->where('name', 'like', '%' . $request->search . '%');
+                    });
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('shalu_category_id', $request->category);
+        }
+
+        if ($request->filled('job_type')) {
+            $query->where('job_type', $request->job_type);
+        }
+
+        // Ambil hasil pencarian atau semua data jika tidak ada filter
+        $jobs = $query->latest()->paginate(6)->withQueryString();
+
+        return view('jobs.index', compact('jobs', 'categories'));
     }
-
-    if ($request->filled('category')) {
-        $query->where('shalu_category_id', $request->category);
-    }
-
-    if ($request->filled('job_type')) {
-        $query->where('job_type', $request->job_type);
-    }
-
-    // Ambil hasil pencarian atau semua data jika tidak ada filter
-    $jobs = $query->latest()->paginate(6)->withQueryString();
-
-    return view('jobs.index', compact('jobs', 'categories'));
-}
 
 
 
@@ -124,7 +141,7 @@ class JobController extends Controller
             'deadline' => $request->deadline,
             'description' => $request->description,
             'requirements' => $request->requirements, // <-- pastikan ini masuk
-            'status' => 'aktif',
+            'status' => 'active',
         ]);
 
         return redirect()->route('company.jobs.index')->with('success', 'Lowongan berhasil ditambahkan.');
@@ -171,19 +188,25 @@ class JobController extends Controller
         return redirect()->route('company.jobs.index')->with('success', 'Lowongan berhasil diperbarui');
     }
 
-    public function destroy($id)
-    {
-        $job = Job::findOrFail($id);
+   public function destroy($id)
+{
+    $job = Job::findOrFail($id);
 
-        if (auth()->user()->role === 'company') {
-            if ($job->shalu_company_id !== auth()->user()->company->id) {
-                abort(403);
-            }
+    if (auth()->user()->role === 'company') {
+        if ($job->shalu_company_id !== auth()->user()->company->id) {
+            abort(403);
         }
+    }
 
-        $job->delete();
+    $job->delete();
+
+    if (auth()->user()->role === 'admin') {
+        return redirect()->route('admin.jobs.index')->with('success', 'Lowongan berhasil dihapus');
+    } else {
         return redirect()->route('company.jobs.index')->with('success', 'Lowongan berhasil dihapus');
     }
+}
+
     // Di app/Models/User.php
 
 

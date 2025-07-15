@@ -37,7 +37,6 @@
 
     {{-- Stats --}}
     <div class="row g-4">
-        {{-- Template Card --}}
         @php
             $cards = [
                 [
@@ -67,6 +66,13 @@
                     'icon' => 'file-earmark-text-fill',
                     'color' => 'danger',
                     'route' => route('admin.applications.index'),
+                ],
+                [
+                    'title' => 'Total Kategori',
+                    'value' => $totalCategories ?? 0,
+                    'icon' => 'tags-fill',
+                    'color' => 'primary',
+                    'route' => route('admin.categories.index'),
                 ],
             ];
         @endphp

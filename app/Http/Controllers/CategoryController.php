@@ -7,54 +7,58 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    // ✅ Menampilkan daftar kategori
     public function index()
     {
-        $categories = Category::latest()->get();
-        return view('categories.index', compact('categories'));
+        $categories = Category::latest()->paginate(10);
+        return view('admin.categories.index', compact('categories'));
     }
 
-   public function create()
-{
-    return view('admin.categories.create'); // Pastikan view ini ada
-}
-
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255|unique:categories',
-        'description' => 'nullable|string'
-    ]);
-    
-    Category::create($validated);
-    
-    return redirect()->route('admin.categories.index')
-         ->with('success', 'Kategori berhasil ditambahkan!');
-}
-
-    public function edit($id)
+    // ✅ Tampilkan form tambah kategori
+    public function create()
     {
-        $category = Category::findOrFail($id);
-        return view('categories.edit', compact('category'));
+        return view('admin.categories.create');
     }
 
-    public function update(Request $request, $id)
+    // ✅ Simpan kategori baru
+    public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:shalu_categories,name,' . $id,
+            'name' => 'required|string|max:255|unique:shalu_categories,name',
         ]);
 
-        $category = Category::findOrFail($id);
+        Category::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan');
+    }
+
+    // ✅ Tampilkan form edit
+    public function edit(Category $category)
+    {
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    // ✅ Update kategori
+    public function update(Request $request, Category $category)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:shalu_categories,name,' . $category->id,
+        ]);
+
         $category->update([
             'name' => $request->name,
         ]);
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui');
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui');
     }
 
-    public function destroy($id)
+    // ✅ Hapus kategori
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
         $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
+
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus');
     }
 }

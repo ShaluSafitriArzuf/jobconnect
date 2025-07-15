@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +23,7 @@
 
     @stack('styles')
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
@@ -66,97 +68,110 @@
                 <!-- Right Side Nav -->
                 <ul class="navbar-nav ms-auto">
                     @auth
-                        @if(isset($unreadNotificationsCount))
-                        <li class="nav-item dropdown">
-                            <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-bell"></i>
-                                @if($unreadNotificationsCount > 0)
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ $unreadNotificationsCount }}
-                                    </span>
-                                @endif
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 350px;">
-                                <li>
-                                    <h6 class="dropdown-header">Notifikasi</h6>
-                                </li>
-                                @forelse($notifications as $notification)
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center py-2 {{ $notification->unread() ? 'bg-light' : '' }}"
-                                           href="{{ $notification->data['url'] ?? '#' }}">
-                                            <div class="flex-shrink-0 me-3">
-                                                <i class="bi bi-{{ $notification->data['icon'] ?? 'bell' }} text-{{ $notification->data['color'] ?? 'primary' }}"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between">
-                                                    <h6 class="mb-0">{{ $notification->data['title'] }}</h6>
-                                                    <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-                                                </div>
-                                                <p class="mb-0 text-muted small">{{ Str::limit($notification->data['message'], 40) }}</p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                @empty
-                                    <li class="text-center py-3 text-muted">
-                                        Tidak ada notifikasi
-                                    </li>
-                                @endforelse
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-center" href="#">
-                                        Lihat Semua Notifikasi
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
+                                    @if(isset($unreadNotificationsCount))
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-bell"></i>
+                                                @if($unreadNotificationsCount > 0)
+                                                    <span
+                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                        {{ $unreadNotificationsCount }}
+                                                    </span>
+                                                @endif
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 350px;">
+                                                <li>
+                                                    <h6 class="dropdown-header">Notifikasi</h6>
+                                                </li>
+                                                @forelse($notifications as $notification)
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center py-2 {{ $notification->unread() ? 'bg-light' : '' }}"
+                                                            href="{{ $notification->data['url'] ?? '#' }}">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <i
+                                                                    class="bi bi-{{ $notification->data['icon'] ?? 'bell' }} text-{{ $notification->data['color'] ?? 'primary' }}"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <h6 class="mb-0">{{ $notification->data['title'] }}</h6>
+                                                                    <small
+                                                                        class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                                                </div>
+                                                                <p class="mb-0 text-muted small">
+                                                                    {{ Str::limit($notification->data['message'], 40) }}</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                @empty
+                                                    <li class="text-center py-3 text-muted">
+                                                        Tidak ada notifikasi
+                                                    </li>
+                                                @endforelse
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-center" href="#">
+                                                        Lihat Semua Notifikasi
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    @endif
 
-                        <!-- User Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                                <div class="avatar-sm me-2">
-                                    <span class="avatar-title bg-light text-dark rounded-circle">
-                                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                    </span>
-                                </div>
-                                <span class="d-none d-lg-inline">{{ auth()->user()->name }}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <h6 class="dropdown-header">Akun Saya</h6>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-person me-2"></i> Profil
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ 
-                                        auth()->user()->role === 'admin' ? route('admin.dashboard') : 
-                                        (auth()->user()->role === 'company' ? route('company.dashboard') : route('user.dashboard')) 
-                                    }}">
-                                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-gear me-2"></i> Pengaturan
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
+                                    <!-- User Dropdown -->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                                            data-bs-toggle="dropdown">
+                                            <div class="avatar-sm me-2">
+                                                <span class="avatar-title bg-light text-dark rounded-circle">
+                                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                                </span>
+                                            </div>
+                                            <span class="d-none d-lg-inline">{{ auth()->user()->name }}</span>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <h6 class="dropdown-header">Akun Saya</h6>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ 
+                            auth()->user()->role === 'admin' ? '#' :
+                        (auth()->user()->role === 'company' ? route('company.profile.edit') : '#') 
+                        }}">
+                                                    <i class="bi bi-person me-2"></i> Profil
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a class="dropdown-item" href="{{ 
+                                                        auth()->user()->role === 'admin' ? route('admin.dashboard') :
+                        (auth()->user()->role === 'company' ? route('company.dashboard') : route('user.dashboard')) 
+                                                    }}">
+                                                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="bi bi-gear me-2"></i> Pengaturan
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <form action="{{ route('logout') }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </li>
                     @else
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">
@@ -190,13 +205,15 @@
                         <i class="bi bi-briefcase me-2"></i> JobConnect
                     </h5>
                     <p class="small">
-                        Platform pencarian kerja dan rekrutmen terbaik untuk menghubungkan perusahaan dengan talenta terbaik.
+                        Platform pencarian kerja dan rekrutmen terbaik untuk menghubungkan perusahaan dengan talenta
+                        terbaik.
                     </p>
                 </div>
                 <div class="col-md-2 mb-4 mb-md-0">
                     <h6 class="fw-bold">Untuk Pencari Kerja</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{{ route('admin.jobs.index') }}" class="text-white-50">Cari Lowongan</a></li>
+                        <li class="mb-2"><a href="{{ route('admin.jobs.index') }}" class="text-white-50">Cari
+                                Lowongan</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Tips Karir</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Buat Resume</a></li>
                     </ul>
@@ -204,8 +221,10 @@
                 <div class="col-md-2 mb-4 mb-md-0">
                     <h6 class="fw-bold">Untuk Perusahaan</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="{{ route('register') }}?role=company" class="text-white-50">Daftar Perusahaan</a></li>
-                        <li class="mb-2"><a href="{{ route('company.jobs.create') }}" class="text-white-50">Pasang Lowongan</a></li>
+                        <li class="mb-2"><a href="{{ route('register') }}?role=company" class="text-white-50">Daftar
+                                Perusahaan</a></li>
+                        <li class="mb-2"><a href="{{ route('company.jobs.create') }}" class="text-white-50">Pasang
+                                Lowongan</a></li>
                         <li class="mb-2"><a href="#" class="text-white-50">Solusi Rekrutmen</a></li>
                     </ul>
                 </div>
@@ -246,4 +265,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

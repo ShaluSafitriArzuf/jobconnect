@@ -108,33 +108,14 @@
                                 </small>
                             @endif
                         </div>
-                        
-                        <div class="d-flex gap-2">
-                            @auth
-                                @if(auth()->user()->role === 'company' && auth()->user()->id == $job->company->user_id)
-                                    <a href="{{ route('jobs.edit', $job->id) }}" class="btn btn-warning">
-                                        <i class="bi bi-pencil me-1"></i> Edit
-                                    </a>
-                                    <a href="{{ route('applications.applicants', $job->id) }}" class="btn btn-primary">
-                                        <i class="bi bi-people me-1"></i> Lihat Pelamar
-                                    </a>
-                                @elseif(auth()->user()->role === 'user')
-                                    @if($hasApplied)
-                                        <button class="btn btn-success" disabled>
-                                            <i class="bi bi-check-circle me-1"></i> Sudah Dilamar
-                                        </button>
-                                    @else
-                                        <a href="{{ route('applications.create', $job->id) }}" class="btn btn-success">
-                                            <i class="bi bi-send me-1"></i> Lamar Sekarang
-                                        </a>
-                                    @endif
-                                @endif
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-primary">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i> Login untuk Melamar
+
+                        @auth
+                            @if(auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.applications.index') }}" class="btn btn-primary">
+                                    <i class="bi bi-people me-1"></i> Lihat Semua Pelamar
                                 </a>
-                            @endauth
-                        </div>
+                            @endif
+                        @endauth
                     </div>
                 </div>
             </div>

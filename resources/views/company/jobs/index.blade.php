@@ -20,10 +20,10 @@
         </div>
     @endif
 
-    <!-- Optional Filter Section -->
+    <!-- Filter Section -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form action="{{ route('jobs.index') }}" method="GET">
+            <form action="{{ route('company.jobs.index') }}" method="GET">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label for="search" class="form-label">Cari Lowongan</label>
@@ -99,7 +99,7 @@
                             </p>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-outline-primary">
+                                <a href="{{ route('company.jobs.show', $job->id) }}" class="btn btn-outline-primary">
                                     <i class="bi bi-eye me-1"></i> Lihat Detail
                                 </a>
                                 <div class="d-flex gap-2">
@@ -114,7 +114,7 @@
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
-                                    <a href="{{ route('applications.applicants', $job->id) }}"
+                                    <a href="{{ route('company.applications.applicants', $job->id) }}"
                                        class="btn btn-sm btn-outline-success" title="Pelamar">
                                         <i class="bi bi-people"></i>
                                     </a>

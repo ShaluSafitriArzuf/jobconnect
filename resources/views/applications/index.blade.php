@@ -38,8 +38,13 @@
                             @foreach ($applications as $application)
                                 <tr>
                                     <td class="ps-4 align-middle">
-                                        <h6 class="mb-1">{{ $application->job->title ?? '-' }}</h6>
-                                        <small class="text-muted">{{ $application->job->location ?? '-' }}</small>
+                                        @if($application->job)
+                                            <h6 class="mb-1">{{ $application->job->title }}</h6>
+                                            <small class="text-muted">{{ $application->job->location }}</small>
+                                        @else
+                                            <h6 class="mb-1 text-danger">[Lowongan sudah dihapus]</h6>
+                                            <small class="text-muted">-</small>
+                                        @endif
                                     </td>
                                     <td class="align-middle">
                                         {{ $application->job->company->name ?? '-' }}
@@ -64,10 +69,16 @@
                                     </td>
                                     <td class="pe-4 align-middle">
                                         <div class="d-flex justify-content-end gap-2">
-                                            <a href="{{ route('jobs.show', $application->job->id) }}" 
-                                               class="btn btn-sm btn-outline-primary" title="Lihat Lowongan">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
+                                            @if($application->job)
+                                                <a href="{{ route('jobs.show', $application->job->id) }}" 
+                                                   class="btn btn-sm btn-outline-primary" title="Lihat Lowongan">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                </a>
+                                            @else
+                                                <button class="btn btn-sm btn-outline-danger" disabled title="Lowongan tidak tersedia">
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                                </button>
+                                            @endif
                                             <button type="button" class="btn btn-sm btn-outline-secondary" 
                                                 data-bs-toggle="modal" data-bs-target="#applicationModal{{ $application->id }}"
                                                 title="Lihat Detail">
@@ -82,14 +93,23 @@
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Detail Lamaran - {{ $application->job->title }}</h5>
+                                                <h5 class="modal-title">
+                                                    Detail Lamaran - 
+                                                    @if($application->job)
+                                                        {{ $application->job->title }}
+                                                    @else
+                                                        <span class="text-danger">[Lowongan sudah dihapus]</span>
+                                                    @endif
+                                                </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="mb-4">
-                                                    <h6 class="fw-bold">Perusahaan</h6>
-                                                    <p>{{ $application->job->company->name }}</p>
-                                                </div>
+                                                @if($application->job)
+                                                    <div class="mb-4">
+                                                        <h6 class="fw-bold">Perusahaan</h6>
+                                                        <p>{{ $application->job->company->name ?? '-' }}</p>
+                                                    </div>
+                                                @endif
                                                 <div class="mb-4">
                                                     <h6 class="fw-bold">Status Lamaran</h6>
                                                     <p>

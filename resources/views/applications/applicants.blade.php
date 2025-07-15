@@ -29,7 +29,7 @@
                             <td>{{ $application->user->name }}</td>
                             <td>{{ $application->user->email }}</td>
                             <td>
-                                <form method="POST" action="{{ route('applications.updateStatus', $application->id) }}">
+                                <form method="POST" action="{{ route('company.applications.updateStatus', $application->id) }}">
                                     @csrf
                                     @method('PUT')
                                     <select name="status" class="form-select" onchange="confirmChange(this)">

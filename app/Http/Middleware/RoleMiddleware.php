@@ -9,29 +9,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  $role
-     * @return mixed
-     */
-     protected $role;
-
-    public function __construct($role = null)
+    public function handle(Request $request, Closure $next, $role)
     {
-        $this->role = $role;
-    }
-
-    public function handle($request, Closure $next)
-    {
-        if (!Auth::check()) {
+        if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-        if ($this->role && Auth::user()->role !== $this->role) {
-            abort(403, 'Unauthorized');
+        if (auth()->user()->role !== $role) {
+            abort(403, 'Akses Ditolak. Anda tidak memiliki izin.');
         }
 
         return $next($request);

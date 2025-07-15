@@ -8,9 +8,6 @@
         <h2 class="fw-bold mb-0">
             <i class="bi bi-briefcase-fill me-2"></i>Daftar Lowongan Kerja
         </h2>
-        <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Lowongan
-        </a>
     </div>
 
     @if(session('success'))
@@ -20,18 +17,19 @@
         </div>
     @endif
 
+    {{-- Filter --}}
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('admin.jobs.index') }}" method="GET">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label for="search" class="form-label">Cari Lowongan</label>
-                        <input type="text" name="search" id="search" class="form-control"
+                        <input type="text" name="search" class="form-control"
                                placeholder="Cari berdasarkan judul..." value="{{ request('search') }}">
                     </div>
                     <div class="col-md-3">
                         <label for="category" class="form-label">Kategori</label>
-                        <select name="category" id="category" class="form-select">
+                        <select name="category" class="form-select">
                             <option value="">Semua Kategori</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
@@ -42,11 +40,12 @@
                     </div>
                     <div class="col-md-3">
                         <label for="job_type" class="form-label">Jenis Pekerjaan</label>
-                        <select name="job_type" id="job_type" class="form-select">
+                        <select name="job_type" class="form-select">
                             <option value="">Semua Jenis</option>
                             <option value="Full-Time" {{ request('job_type') == 'Full-Time' ? 'selected' : '' }}>Full-Time</option>
                             <option value="Part-Time" {{ request('job_type') == 'Part-Time' ? 'selected' : '' }}>Part-Time</option>
                             <option value="Internship" {{ request('job_type') == 'Internship' ? 'selected' : '' }}>Internship</option>
+                            <option value="Contract" {{ request('job_type') == 'Contract' ? 'selected' : '' }}>Contract</option>
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
@@ -98,28 +97,20 @@
                                 </span>
                             </div>
 
-                            <p class="card-text text-muted mb-4">
-                                {{ Str::limit(strip_tags($job->description), 150) }}
-                            </p>
-
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-outline-primary">
                                     <i class="bi bi-eye me-1"></i> Lihat Detail
                                 </a>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.jobs.edit', $job->id) }}" class="btn btn-sm btn-outline-warning" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form action="{{ route('admin.jobs.destroy', $job->id) }}" method="POST"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                <form action="{{ route('admin.jobs.destroy', $job->id) }}" method="POST"
+                                      onsubmit="return confirm('Yakin ingin menghapus lowongan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -127,19 +118,18 @@
         </div>
 
         <div class="mt-4">
-            {{ $jobs->links() }}
+            {{ $jobs->appends(request()->query())->links() }}
         </div>
+
     @else
         <div class="card shadow-sm">
             <div class="card-body text-center py-5">
                 <i class="bi bi-briefcase display-5 text-muted mb-3"></i>
                 <h5 class="text-muted">Belum ada lowongan tersedia</h5>
-                <p class="text-muted">Silakan coba dengan filter yang berbeda atau coba lagi nanti</p>
-                <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary mt-3">
-                    <i class="bi bi-plus-lg me-1"></i> Buat Lowongan Pertama
-                </a>
+                <p class="text-muted">Coba gunakan filter lain atau periksa kembali nanti</p>
             </div>
         </div>
     @endif
+
 </div>
 @endsection

@@ -8,12 +8,6 @@
         <h2 class="fw-bold mb-0">
             <i class="bi bi-people-fill me-2"></i>Kelola Pengguna
         </h2>
-        
-        <div>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Pengguna
-            </a>
-        </div>
     </div>
 
     @if (session('success'))
@@ -122,11 +116,6 @@
                                             <i class="bi bi-eye-fill"></i>
                                         </button>
                                         
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" 
-                                           class="btn btn-sm btn-outline-warning" title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        
                                         @if($user->id !== auth()->id())
                                             <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" 
                                                   class="d-inline" 
@@ -153,10 +142,7 @@
                                 <td colspan="7" class="text-center py-4">
                                     <i class="bi bi-people display-5 text-muted mb-3"></i>
                                     <h5 class="text-muted">Belum ada pengguna terdaftar</h5>
-                                    <p class="text-muted">Mulai dengan menambahkan pengguna pertama</p>
-                                    <a href="{{ route('users.create') }}" class="btn btn-primary">
-                                        <i class="bi bi-plus-lg me-1"></i> Tambah Pengguna
-                                    </a>
+                                    <p class="text-muted">Pengguna akan muncul setelah melakukan pendaftaran</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -166,11 +152,12 @@
         </div>
     </div>
 
-    @if ($users->hasPages()) <!-- Sekarang tidak error karena $users adalah Paginator -->
+   @if ($users->hasPages())
     <div class="mt-4">
-        {{ $users->links() }}
+        {{ $users->appends(request()->query())->links() }}
     </div>
 @endif
+
 </div>
 
 <!-- Modal Detail User -->
@@ -251,9 +238,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary">
-                    <i class="bi bi-pencil me-1"></i> Edit
-                </a>
             </div>
         </div>
     </div>

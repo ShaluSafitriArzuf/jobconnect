@@ -155,6 +155,14 @@ public function show($id)
 
     return view('admin.companies.show', compact('company'));
 }
+public function destroy($id)
+{
+    $company = Company::findOrFail($id);
+    $company->delete();
+
+    return redirect()->route('admin.companies.index')->with('success', 'Perusahaan berhasil dihapus.');
+}
+
 
 
 }

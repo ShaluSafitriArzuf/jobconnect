@@ -18,7 +18,14 @@
                         <i class="bi bi-building display-6 text-success"></i>
                     </div>
                     <div class="flex-grow-1 ms-4">
-                        <h3 class="card-title">Halo, {{ auth()->user()->name }}! 🏢</h3>
+                        <h3 class="card-title">
+                            Halo, {{ auth()->user()->name }}!
+                            <span class="text-muted fs-5">
+                                @if($company)
+                                    ({{ $company->name }})
+                                @endif
+                            </span> 🏢
+                        </h3>
                         <p class="card-text">Kelola lowongan dan pantau pelamar pekerjaan di perusahaan Anda.</p>
                         @if($company)
                             <span class="badge bg-success bg-opacity-25 text-success">
@@ -32,7 +39,6 @@
 
         <!-- Stats -->
         <div class="row g-4 mb-4">
-            <!-- Lowongan Aktif -->
             <div class="col-xl-3 col-md-6">
                 <a href="{{ route('company.jobs.index') }}" class="text-decoration-none text-dark">
                     <div class="card border-start border-start-4 border-start-primary h-100 shadow-sm">
@@ -44,7 +50,6 @@
                 </a>
             </div>
 
-            <!-- Total Pelamar -->
             <div class="col-xl-3 col-md-6">
                 <div class="card border-start border-start-4 border-start-info h-100 shadow-sm">
                     <div class="card-body">
@@ -53,35 +58,31 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
 
         <!-- Pelamar Terbaru -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white border-bottom-0 py-3">
-                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Pelamar </h5>
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Pelamar</h5>
             </div>
             <div class="card-body p-0">
                 @if($recentApplicants && $recentApplicants->count() > 0)
                     <ul class="list-group list-group-flush">
                         @foreach($recentApplicants as $applicant)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>{{ $applicant->user->name }}</strong> -
-                                        <a href="{{ route('applications.applicants', $applicant->job->id) }}"
-                                            class="text-decoration-none">
-                                            {{ $applicant->job->title }}
-                                        </a>
-                                    </div>
-                                    <span class="badge bg-{{
-                            $applicant->status == 'pending' ? 'warning' :
-                            ($applicant->status == 'accepted' ? 'success' : 'danger')
-                                                    }}">
-                                        {{ ucfirst($applicant->status) }}
-                                    </span>
-                                </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ $applicant->user->name }}</strong> -
+                                    <a href="{{ route('company.applications.applicants', $applicant->job->id) }}" class="text-decoration-none">
+                                        {{ $applicant->job->title }}
+                                    </a>
+                                </div>
+                                <span class="badge bg-{{
+                                    $applicant->status == 'pending' ? 'warning' :
+                                    ($applicant->status == 'accepted' ? 'success' : 'danger')
+                                }}">
+                                    {{ ucfirst($applicant->status) }}
+                                </span>
+                            </li>
                         @endforeach
                     </ul>
                 @else
@@ -93,7 +94,7 @@
             </div>
         </div>
 
-        <!-- Lowongan Saya -->
+        <!-- Lowongan Anda -->
         <div class="card shadow-sm mt-4">
             <div class="card-header bg-white border-bottom-0 py-3">
                 <h5 class="mb-0"><i class="bi bi-briefcase-fill me-2"></i>Lowongan Anda</h5>
@@ -105,8 +106,7 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <strong>{{ $job->title }}</strong><br>
-                                    <small class="text-muted">{{ $job->location }} &middot;
-                                        {{ $job->created_at->diffForHumans() }}</small>
+                                    <small class="text-muted">{{ $job->location }} &middot; {{ $job->created_at->diffForHumans() }}</small>
                                 </div>
                                 <a href="{{ route('company.jobs.show', $job->id) }}" class="btn btn-sm btn-outline-primary">
                                     Detail

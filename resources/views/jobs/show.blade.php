@@ -124,7 +124,7 @@
                                     <a href="{{ route('company.jobs.edit', $job->id) }}" class="btn btn-warning">
                                         <i class="bi bi-pencil me-1"></i> Edit
                                     </a>
-                                    <a href="{{ route('applications.applicants', $job->id) }}" class="btn btn-primary">
+                                    <a href="{{ route('company.applications.applicants', $job->id) }}" class="btn btn-primary">
                                         <i class="bi bi-people me-1"></i> Lihat Pelamar
                                     </a>
                                 @elseif(auth()->user()->role === 'user')
@@ -137,7 +137,7 @@
                                             <i class="bi bi-check-circle me-1"></i> Sudah Dilamar
                                         </button>
                                     @else
-                                        <a href="{{ route('applications.create', $job->id) }}" class="btn btn-success">
+                                        <a href="{{ route('user.applications.create', $job->id) }}" class="btn btn-success">
                                             <i class="bi bi-send me-1"></i> Lamar Sekarang
                                         </a>
                                     @endif
