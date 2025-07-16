@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->foreignId('shalu_category_id')->constrained('shalu_categories');
             $table->string('title');
             $table->text('description');
-            $table->text('requirements')->nullable(); // Tambahkan ini
-            $table->string('salary')->nullable();    // Tambahkan ini
+            $table->text('requirements')->nullable(); 
+            $table->string('salary')->nullable();  
             $table->string('location');
             $table->string('job_type');
             $table->date('deadline');

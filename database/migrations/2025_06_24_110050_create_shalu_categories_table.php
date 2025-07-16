@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('shalu_categories', function (Blueprint $table) {
         $table->id();
-        $table->string('name'); // contoh: IT, Finance, Design, dll
+        $table->string('name'); 
         $table->timestamps();
     });
 }

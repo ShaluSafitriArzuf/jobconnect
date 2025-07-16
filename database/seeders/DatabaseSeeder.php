@@ -14,20 +14,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Disable foreign key checks
+    
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // 1. Hapus data lama dengan urutan yang benar
+
         DB::table('shalu_applications')->truncate();
         DB::table('shalu_jobs')->truncate();
         DB::table('shalu_companies')->truncate();
         DB::table('shalu_categories')->truncate();
         DB::table('shalu_users')->truncate();
 
-        // Enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // 2. Seed Users (menggunakan tabel shalu_users)
         $adminUser = DB::table('shalu_users')->insertGetId([
             'name' => 'Admin Sistem',
             'email' => 'admin@mail.com',
@@ -55,7 +53,6 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now()
         ]);
 
-        // 3. Seed Categories (menggunakan tabel shalu_categories)
         $categories = [
             ['name' => 'IT', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Finance', 'created_at' => now(), 'updated_at' => now()],
@@ -65,7 +62,6 @@ class DatabaseSeeder extends Seeder
         ];
         DB::table('shalu_categories')->insert($categories);
 
-        // 4. Seed Companies (menggunakan tabel shalu_companies) dengan relasi ke user
         DB::table('shalu_companies')->insert([
             [
                 'shalu_user_id' => $companyUser,
@@ -87,8 +83,6 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
-        // 5. Seed Jobs (menggunakan tabel shalu_jobs)
-        // 5. Seed Jobs (menggunakan tabel shalu_jobs)
         DB::table('shalu_jobs')->insert([
             [
                 'shalu_company_id' => 1,
@@ -114,7 +108,6 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
-        // 6. Seed Applications (opsional)
         DB::table('shalu_applications')->insert([
             [
                 'shalu_user_id' => $regularUser,

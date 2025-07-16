@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     use HasFactory;
-
-    // ✅ Penting! Biar Laravel tahu pakai tabel 'shalu_jobs'
     protected $table = 'shalu_jobs';
 
     protected $fillable = [
@@ -25,8 +23,6 @@ class Job extends Model
         'status'
     ];
 
-
-    // app/Models/Job.php
     public function company()
     {
         return $this->belongsTo(Company::class, 'shalu_company_id');
@@ -37,8 +33,6 @@ class Job extends Model
         return $this->belongsTo(Category::class, 'shalu_category_id');
     }
 
-
-    // Scope untuk job aktif
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
@@ -49,8 +43,7 @@ class Job extends Model
         return $this->hasMany(Application::class, 'shalu_job_id');
     }
     protected $casts = [
-        'deadline' => 'date', // atau 'datetime'
-        // ... casts lainnya
+        'deadline' => 'date', 
     ];
 
 }

@@ -35,8 +35,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Application::class, 'shalu_user_id'); // FOREIGN KEY disesuaikan!
     }
-
-    // Cek role
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

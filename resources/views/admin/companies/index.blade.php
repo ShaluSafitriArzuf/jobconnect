@@ -60,7 +60,7 @@
                                     <td>{{ $company->jobs_count ?? 0 }}</td>
                                     <td class="pe-4">
                                         <div class="d-flex justify-content-end gap-2">
-                                            {{-- Optional: Tombol Lihat --}}
+                                            {{-- Tombol Lihat --}}
                                             <a href="{{ route('admin.companies.show', $company->id) }}" 
                                                class="btn btn-sm btn-outline-info" title="Lihat Detail">
                                                 <i class="bi bi-eye-fill"></i>

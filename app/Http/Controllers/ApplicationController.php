@@ -9,52 +9,47 @@ use App\Models\Job;
 class ApplicationController extends Controller
 {
     // Tampilkan semua lamaran user yang sedang login
-    // ApplicationController.php
-   public function index()
-{
-    $user = auth()->user();
+    public function index()
+    {
+        $user = auth()->user();
 
-    // 1. Jika Admin
-    if ($user->role === 'admin') {
-        $applications = Application::with(['user', 'job.company'])
-            ->latest()
-            ->paginate(10);
+        // 1. Jika Admin
+        if ($user->role === 'admin') {
+            $applications = Application::with(['user', 'job.company'])
+                ->latest()
+                ->paginate(10);
 
-        return view('admin.applications.index', compact('applications'));
-    }
+            return view('admin.applications.index', compact('applications'));
+        }
 
-    // 2. Jika Perusahaan
-    if ($user->role === 'company') {
-        $company = $user->company; // ambil data perusahaan yang terkait dengan user
-        $applications = Application::whereHas('job', function ($query) use ($company) {
-                $query->where('shalu_company_id', $company->id); // pastikan ini sesuai dengan kolom yang kamu pakai
+        // 2. Jika Perusahaan
+        if ($user->role === 'company') {
+            $company = $user->company; 
+            $applications = Application::whereHas('job', function ($query) use ($company) {
+                $query->where('shalu_company_id', $company->id);
             })
-            ->with(['user', 'job.company'])
+                ->with(['user', 'job.company'])
+                ->latest()
+                ->paginate(10);
+
+            return view('company.applications.index', compact('applications'));
+        }
+
+        // 3. Jika User Biasa
+        $applications = $user->applications()
+            ->with('job')
             ->latest()
             ->paginate(10);
 
-        return view('company.applications.index', compact('applications'));
+        return view('applications.index', compact('applications'));
     }
 
-    // 3. Jika User Biasa
-    $applications = $user->applications()
-        ->with('job')
-        ->latest()
-        ->paginate(10);
-
-    return view('applications.index', compact('applications'));
-}
-
-
-
-    // Form untuk melamar kerja
     public function create($jobId)
     {
         $job = Job::findOrFail($jobId);
         return view('applications.create', compact('job'));
     }
 
-    // Simpan data lamaran
     public function store(Request $request, $jobId)
     {
         $request->validate([
@@ -90,10 +85,9 @@ class ApplicationController extends Controller
     }
 
     // Menampilkan pelamar untuk suatu job (khusus company)
-    // Di app/Http/Controllers/ApplicationController.php
     public function userApplications()
     {
-        $applications = auth()->user()->applications()->with('job')->latest()->paginate(10); // ✅ ini bisa pakai ->links()
+        $applications = auth()->user()->applications()->with('job')->latest()->paginate(10); 
         return view('applications.index', compact('applications'));
     }
 
@@ -103,9 +97,8 @@ class ApplicationController extends Controller
     {
         $application = Application::findOrFail($id);
 
-        // Validasi role yang bisa update
         if (auth()->user()->role !== 'company') {
-            abort(403); // hanya perusahaan yang boleh
+            abort(403);
         }
 
         $request->validate([
@@ -130,6 +123,5 @@ class ApplicationController extends Controller
 
         return view('applications.applicants', compact('applications', 'job'));
     }
-    // Semua pelamar dari semua lowongan milik perusahaan
-   
+
 }

@@ -63,7 +63,6 @@
                                 <br>
                                 <small class="text-muted">{{ $job->location }} - Diposting {{ $job->created_at->diffForHumans() }}</small>
                             </div>
-                            {{-- Admin tidak bisa edit job --}}
                         </li>
                     @endforeach
                 </ul>

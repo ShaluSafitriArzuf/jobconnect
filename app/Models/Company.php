@@ -22,7 +22,6 @@ class Company extends Model
     'logo'
 ];
 
-// app/Models/Company.php
 public function user()
 {
     return $this->belongsTo(User::class);

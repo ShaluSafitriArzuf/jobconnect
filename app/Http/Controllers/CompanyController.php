@@ -9,62 +9,57 @@ use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
-    // ✅ Company dashboard
- public function dashboard()
-{
-    $user = Auth::user();
+    public function dashboard()
+    {
+        $user = Auth::user();
 
-    if ($user->role !== 'company') {
-        abort(403, 'Unauthorized.');
-    }
+        if ($user->role !== 'company') {
+            abort(403, 'Unauthorized.');
+        }
 
-    $company = Company::where('shalu_user_id', $user->id)->first();
+        $company = Company::where('shalu_user_id', $user->id)->first();
 
-    if (!$company) {
-        return redirect()->route('company.profile.create')
-            ->with('warning', 'Silakan lengkapi profil perusahaan Anda terlebih dahulu.');
-    }
+        if (!$company) {
+            return redirect()->route('company.profile.create')
+                ->with('warning', 'Silakan lengkapi profil perusahaan Anda terlebih dahulu.');
+        }
 
-    $activeJobs = $company->jobs()->where('status', 'active')->count();
+        $activeJobs = $company->jobs()->where('status', 'active')->count();
 
-    $totalApplicants = Application::whereHas('job', function ($query) use ($company) {
-        $query->where('shalu_company_id', $company->id);
-    })->count();
-
-    $newApplicants = Application::whereHas('job', function ($query) use ($company) {
-        $query->where('shalu_company_id', $company->id);
-    })->where('status', 'pending')->count();
-
-    $recentApplicants = Application::with('user', 'job')
-        ->whereHas('job', function ($query) use ($company) {
+        $totalApplicants = Application::whereHas('job', function ($query) use ($company) {
             $query->where('shalu_company_id', $company->id);
-        })
-        ->latest()
-        ->take(5)
-        ->get();
+        })->count();
 
-    $companyJobs = $company->jobs()->latest()->take(5)->get(); // ✅ tambahkan ini
+        $newApplicants = Application::whereHas('job', function ($query) use ($company) {
+            $query->where('shalu_company_id', $company->id);
+        })->where('status', 'pending')->count();
 
-    return view('company.dashboard', compact(
-        'company',
-        'activeJobs',
-        'totalApplicants',
-        'newApplicants',
-        'recentApplicants',
-        'companyJobs' // ✅ kirim ke view
-    ));
-}
+        $recentApplicants = Application::with('user', 'job')
+            ->whereHas('job', function ($query) use ($company) {
+                $query->where('shalu_company_id', $company->id);
+            })
+            ->latest()
+            ->take(5)
+            ->get();
 
+        $companyJobs = $company->jobs()->latest()->take(5)->get(); 
 
-    // ✅ Company membuat profil perusahaan
+        return view('company.dashboard', compact(
+            'company',
+            'activeJobs',
+            'totalApplicants',
+            'newApplicants',
+            'recentApplicants',
+            'companyJobs' 
+        ));
+    }
+
     public function create()
     {
-        // Hanya company yang boleh akses
         if (auth()->user()->role !== 'company') {
             abort(403);
         }
 
-        // Cek apakah sudah punya data perusahaan
         $existing = Company::where('shalu_user_id', auth()->id())->first();
         if ($existing) {
             return redirect()->route('company.dashboard')
@@ -75,37 +70,34 @@ class CompanyController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'industry' => 'nullable|string|max:255',
-        'email' => 'required|email|unique:shalu_companies,email',
-        'location' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'industry' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:shalu_companies,email',
+            'location' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-    $logoPath = null;
-    if ($request->hasFile('logo')) {
-        $logoPath = $request->file('logo')->store('logos', 'public');
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public');
+        }
+
+        Company::create([
+            'shalu_user_id' => auth()->id(),
+            'name' => $request->name,
+            'industry' => $request->industry,
+            'email' => $request->email,
+            'location' => $request->location,
+            'description' => $request->description,
+            'logo' => $logoPath,
+        ]);
+
+        return redirect()->route('company.dashboard')->with('success', 'Profil perusahaan berhasil disimpan!');
     }
 
-    Company::create([
-        'shalu_user_id' => auth()->id(),
-        'name' => $request->name,
-        'industry' => $request->industry,
-        'email' => $request->email,
-        'location' => $request->location,
-        'description' => $request->description,
-        'logo' => $logoPath,
-    ]);
-
-    // ✅ Redirect ke dashboard setelah simpan
-    return redirect()->route('company.dashboard')->with('success', 'Profil perusahaan berhasil disimpan!');
-}
-
-
-    // ✅ Edit profil company (optional)
     public function editProfile()
     {
         $company = Company::where('shalu_user_id', auth()->id())->firstOrFail();
@@ -141,27 +133,25 @@ class CompanyController extends Controller
 
         return redirect()->route('company.dashboard')->with('success', 'Profil perusahaan berhasil diperbarui!');
     }
-    // Di CompanyController
-public function index()
-{
-    $companies = Company::withCount('jobs')->paginate(10);
-    return view('admin.companies.index', compact('companies'));
-}
-// app/Http/Controllers/CompanyController.php
+    public function index()
+    {
+        $companies = Company::withCount('jobs')->paginate(10);
+        return view('admin.companies.index', compact('companies'));
+    }
 
-public function show($id)
-{
-    $company = Company::with('jobs')->findOrFail($id);
+    public function show($id)
+    {
+        $company = Company::with('jobs')->findOrFail($id);
 
-    return view('admin.companies.show', compact('company'));
-}
-public function destroy($id)
-{
-    $company = Company::findOrFail($id);
-    $company->delete();
+        return view('admin.companies.show', compact('company'));
+    }
+    public function destroy($id)
+    {
+        $company = Company::findOrFail($id);
+        $company->delete();
 
-    return redirect()->route('admin.companies.index')->with('success', 'Perusahaan berhasil dihapus.');
-}
+        return redirect()->route('admin.companies.index')->with('success', 'Perusahaan berhasil dihapus.');
+    }
 
 
 

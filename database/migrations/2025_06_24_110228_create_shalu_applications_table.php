@@ -16,14 +16,14 @@ return new class extends Migration {
             $table->foreignId('shalu_job_id')->constrained('shalu_jobs')->onDelete('cascade');
             $table->foreignId('shalu_user_id')->constrained('shalu_users')->onDelete('cascade');
             $table->text('cover_letter');
-            $table->string('cv_path')->nullable(); // ← untuk CV yang di-upload
-            $table->string('education')->nullable(); // ← pendidikan terakhir
-            $table->string('experience')->nullable(); // ← pengalaman kerja
-            $table->string('domicile')->nullable(); // ← domisili
-            $table->string('availability')->nullable(); // ← ketersediaan mulai kerja
-            $table->string('phone')->nullable(); // ← nomor telepon
-            $table->string('portfolio_link')->nullable(); // ← link ke portofolio
-            $table->string('linkedin_link')->nullable(); // ← link ke profil LinkedIn
+            $table->string('cv_path')->nullable(); 
+            $table->string('education')->nullable(); 
+            $table->string('experience')->nullable();
+            $table->string('domicile')->nullable(); 
+            $table->string('availability')->nullable(); 
+            $table->string('phone')->nullable();
+            $table->string('portfolio_link')->nullable(); 
+            $table->string('linkedin_link')->nullable(); 
             $table->string('status')->default('pending');
             $table->timestamps();
         });

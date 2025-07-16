@@ -20,8 +20,6 @@ return new class extends Migration {
         $table->rememberToken();
         $table->timestamps();
     });
-    
-    // Hapus statement INSERT atau buat kondisi jika tabel users ada
     if (Schema::hasTable('users')) {
         DB::statement("INSERT INTO shalu_users (name, email, password, created_at, updated_at) 
                SELECT name, email, password, created_at, updated_at FROM users");

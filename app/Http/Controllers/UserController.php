@@ -9,11 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    // Dashboard Admin
     public function adminDashboard()
     {
         return view('dashboard.admin', [
-            'totalUsers' => User::count(), // ✔️ Otomatis pakai shalu_users
+            'totalUsers' => User::count(), 
             'totalCompanies' => Company::count(),
             'totalJobs' => Job::count(),
             'totalApplications' => Application::count(),
@@ -25,23 +24,17 @@ class UserController extends Controller
         $user = auth()->user();
 
         return view('dashboard.user', [
-            // Hitung semua lamaran user yang status-nya pending atau diterima
             'activeApplications' => $user->applications()
                 ->whereIn('status', ['pending', 'accepted'])
                 ->count(),
 
-            // Total lowongan kerja yang masih tersedia (bisa disesuaikan dengan logic deadline/aktif)
-            'availableJobs' => Job::where('deadline', '>=', now())->count(), // Pastikan ada field 'deadline' ya
-
-            // Ambil lamaran user untuk ditampilkan (opsional, bisa dipakai nanti di blade)
+            'availableJobs' => Job::where('deadline', '>=', now())->count(), 
             'userApplications' => $user->applications()
-                ->whereHas('job') // 🟢 Tambah whereHas biar aman dari null
+                ->whereHas('job') 
                 ->with('job')
                 ->latest()
                 ->get(),
 
-
-            // Rekomendasi lowongan kerja terbaru
             'recommendedJobs' => Job::with(['company', 'category'])
                 ->latest()
                 ->take(5)
@@ -81,7 +74,6 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    // Delete User
     public function destroy(User $user)
     {
         $user->delete();
@@ -101,7 +93,7 @@ class UserController extends Controller
         $user = auth()->user();
 
         $applications = $user->applications()
-            ->with('job.company') // biar bisa akses $application->job->company->name
+            ->with('job.company') 
             ->latest()
             ->paginate(10);
 
